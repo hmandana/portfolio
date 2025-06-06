@@ -1,0 +1,7 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Remove all other styles as they're now handled by Tailwind classes */
