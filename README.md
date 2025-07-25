@@ -1,54 +1,153 @@
-# React + TypeScript + Vite
+# 🧑‍💻 Personal Portfolio Website
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A high-performance, mobile-first portfolio website developed with **React**, **TypeScript**, and **Vite**. Designed to showcase professional experience, projects, and technical capabilities with an intuitive user experience and dark mode support.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Tech Stack
 
-## Expanding the ESLint configuration
+| Category           | Technology                                    |
+|--------------------|-----------------------------------------------|
+| **Frontend**        | React 18 + TypeScript                         |
+| **Build Tooling**   | Vite for fast dev + optimized production      |
+| **Styling**         | Tailwind CSS (utility-first approach)         |
+| **Routing**         | React Router DOM                              |
+| **Linting**         | ESLint with TypeScript rules                  |
+| **PostCSS**         | PostCSS with Autoprefixer                     |
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## 📁 Folder Structure
+
+```
+src/
+├── assets/                   # Static files (images, icons)
+├── components/
+│   └── Layout/
+│       ├── Layout.tsx        # Page wrapper with layout
+│       ├── Navbar.tsx        # Top navigation bar
+│       └── Footer.tsx        # Footer with social/contact links
+├── hooks/
+│   └── useTheme.tsx          # Custom dark/light mode hook
+├── pages/
+│   ├── Home.tsx              # Landing/intro page
+│   ├── About.tsx             # Bio and professional summary
+│   ├── Projects.tsx          # Featured project gallery
+│   └── Contact.tsx           # Contact form or social links
+├── App.tsx                   # Route setup and layout composition
+├── main.tsx                  # App entry point
+└── index.css                 # Global styles (Tailwind base)
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## ✨ Features
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+- ✅ **Responsive Design** — Optimized for all devices and screen sizes  
+- 🌗 **Dark Mode** — Automatically adapts to system preferences  
+- 🔄 **Smooth Routing** — Client-side navigation using React Router  
+- ⚡ **Blazing Fast** — Vite ensures near-instant feedback loop during development  
+- 🔒 **Type-Safe** — Built with TypeScript for reliability  
+- ♻️ **Reusable Components** — Modular component-based architecture  
+- 🧪 **Linting Enabled** — Code quality checks using ESLint
+
+---
+
+## 📦 Getting Started
+
+### Prerequisites
+
+- Node.js ≥ 16.x
+- npm or yarn package manager
+
+### Development Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/your-username/portfolio.git
+cd portfolio
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+# → Access at http://localhost:5173
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+
+# Run lint checks
+npm run lint
 ```
+
+---
+
+## 🛠️ Customization
+
+### 🖌️ Styling
+
+- Tailwind config: `tailwind.config.js`  
+- Global CSS: `src/index.css`  
+- Utility classes used in components for styling
+
+### 🌙 Theme (Dark/Light)
+
+- Managed via `useTheme` custom hook  
+- Supports system-based and manual toggling  
+- Example usage:
+
+```tsx
+const { theme, toggleTheme } = useTheme();
+```
+
+### 📄 Content
+
+- Edit page content in `src/pages/`
+- Add new sections by creating a page and adding routes in `App.tsx`
+- Modify navigation via `components/Layout/Navbar.tsx`
+
+---
+
+## 📜 NPM Scripts
+
+| Command           | Description                           |
+|------------------|---------------------------------------|
+| `npm run dev`     | Launch dev server with HMR            |
+| `npm run build`   | Build optimized production bundle     |
+| `npm run preview` | Preview production locally            |
+| `npm run lint`    | Run static code analysis (ESLint)     |
+
+---
+
+## 📌 Deployment
+
+You can deploy this project easily using:
+
+- **[Vercel](https://vercel.com)** – Zero-config deployment for React apps  
+- **[Netlify](https://netlify.com)** – CI/CD with Git integration  
+- **GitHub Pages** – Using `gh-pages` branch for static hosting
+
+> **Note**: For production deployment, configure the `base` path in `vite.config.ts` if deploying under a subpath.
+
+---
+
+## 🙌 Acknowledgments
+
+- [React](https://reactjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Vite](https://vitejs.dev/)
+- [React Router](https://reactrouter.com/)
+
+---
+
+## 📫 Contact
+
+**Name**: Your Full Name  
+**Email**: your.email@example.com  
+**LinkedIn**: [linkedin.com/in/yourprofile](https://linkedin.com/in/yourprofile)
+
+---
