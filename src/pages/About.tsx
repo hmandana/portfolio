@@ -76,7 +76,7 @@ const About: React.FC = () => {
           <div className="space-y-6">
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md transition-shadow hover:shadow-lg">
               <h3 className="text-xl font-medium text-gray-800 dark:text-white">Software Development Engineer</h3>
-              <p className="text-blue-600 dark:text-cyan-400 mb-2">Expedia Group • April 2022 - May 2024</p>
+              <p className="text-blue-600 dark:text-cyan-400 mb-2">Expedia Group • 2022 - 2024</p>
               <p className="text-gray-600 dark:text-gray-300">
                 Led critical internal platform features and sub-applications, directly enhancing operational efficiency. 
                 Successfully delivered three key projects, including two high-impact initiatives. Migrated CI/CD workflows 
@@ -87,7 +87,7 @@ const About: React.FC = () => {
             
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md transition-shadow hover:shadow-lg">
               <h3 className="text-xl font-medium text-gray-800 dark:text-white">Sr. Associate Software Engineer</h3>
-              <p className="text-blue-600 dark:text-cyan-400 mb-2">JP Morgan Chase & Co. • January 2020 - March 2022</p>
+              <p className="text-blue-600 dark:text-cyan-400 mb-2">JP Morgan Chase & Co. • 2020 - 2022</p>
               <p className="text-gray-600 dark:text-gray-300">
                 Mentored team in UI/UX, directly improving user satisfaction. Streamlined collaboration across global teams, 
                 accelerating project delivery timelines. Championed ADA compliance, expanding application accessibility. 
@@ -98,7 +98,7 @@ const About: React.FC = () => {
             
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md transition-shadow hover:shadow-lg">
               <h3 className="text-xl font-medium text-gray-800 dark:text-white">UI Consultant</h3>
-              <p className="text-blue-600 dark:text-cyan-400 mb-2">USAA • June 2019 - December 2019</p>
+              <p className="text-blue-600 dark:text-cyan-400 mb-2">USAA • 2019</p>
               <p className="text-gray-600 dark:text-gray-300">
                 Improved user engagement by rebuilding UI screens based on user flow analysis. Expanded user reach 
                 by creating ADA-compliant client screens. Accelerated development with automated unit and functional tests.
@@ -108,7 +108,7 @@ const About: React.FC = () => {
             
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md transition-shadow hover:shadow-lg">
               <h3 className="text-xl font-medium text-gray-800 dark:text-white">Software Engineer</h3>
-              <p className="text-blue-600 dark:text-cyan-400 mb-2">West Corporation • March 2016 - May 2019</p>
+              <p className="text-blue-600 dark:text-cyan-400 mb-2">West Corporation • 2016 - 2019</p>
               <p className="text-gray-600 dark:text-gray-300">
                 Enhanced application functionality by building UI screens and integrating external apps. Ensured ADA-compliant 
                 design. Maintained application stability through effective production support. Enabled data-driven features 
@@ -119,7 +119,7 @@ const About: React.FC = () => {
 
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md transition-shadow hover:shadow-lg">
               <h3 className="text-xl font-medium text-gray-800 dark:text-white">Consultant</h3>
-              <p className="text-blue-600 dark:text-cyan-400 mb-2">Target Corporation • May 2015 - February 2016</p>
+              <p className="text-blue-600 dark:text-cyan-400 mb-2">Target Corporation • 2015 - 2016</p>
               <p className="text-gray-600 dark:text-gray-300">
                 Designed intuitive UI/UX wireframes, shaping positive user experience. Enabled efficient deployments by coordinating server setup with DevOps. Accelerated and standardized infrastructure setup with cloud automation scripts. Streamlined software delivery by establishing CI/CD pipelines.
               </p>
@@ -127,7 +127,7 @@ const About: React.FC = () => {
 
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md transition-shadow hover:shadow-lg">
               <h3 className="text-xl font-medium text-gray-800 dark:text-white">Consultant</h3>
-              <p className="text-blue-600 dark:text-cyan-400 mb-2">Bestbuy Corporation • January 2015 - May 2015</p>
+              <p className="text-blue-600 dark:text-cyan-400 mb-2">Bestbuy Corporation • 2015</p>
               <p className="text-gray-600 dark:text-gray-300">
                 Accelerated responsive UI development using reusable directives. Enabled dynamic and efficient data presentation in the UI by developing and consuming RESTful web services. Streamlined data retrieval and improved application performance by implementing robust data access and service layers for the Jackrabbit content repository.
               </p>
@@ -135,7 +135,7 @@ const About: React.FC = () => {
 
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md transition-shadow hover:shadow-lg">
               <h3 className="text-xl font-medium text-gray-800 dark:text-white">Consultant</h3>
-              <p className="text-blue-600 dark:text-cyan-400 mb-2">Genband • January 2014 - December 2014</p>
+              <p className="text-blue-600 dark:text-cyan-400 mb-2">Genband • 2014</p>
               <p className="text-gray-600 dark:text-gray-300">
                 Enhanced user experience by developing dynamic UI components. Improved application performance by optimizing data retrieval processes. Streamlined development workflows with automated testing and deployment pipelines.
               </p>
@@ -156,7 +156,7 @@ const About: React.FC = () => {
               </div>
               <div>
                 <h3 className="text-xl font-medium text-gray-800 dark:text-white">ADKD</h3>
-                <p className="text-blue-600 dark:text-cyan-400 mb-2">University of North Carolina at Charlotte • December 2013</p>
+                <p className="text-blue-600 dark:text-cyan-400 mb-2">University of North Carolina at Charlotte • 2013</p>
                 <p className="text-gray-600 dark:text-gray-300">
                   Advanced Database and Knowledge Discovery
                 </p>

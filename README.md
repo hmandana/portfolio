@@ -125,13 +125,33 @@ const { theme, toggleTheme } = useTheme();
 
 ## 📌 Deployment
 
-You can deploy this project easily using:
+### GitHub Pages (Recommended)
+
+This project is configured for automatic deployment to GitHub Pages using GitHub Actions.
+
+#### Automatic Deployment
+1. Push changes to the `main` branch
+2. GitHub Actions will automatically build and deploy the site
+3. Visit your site at: `https://hmandana.github.io/portfolio-next-react`
+
+#### Manual Deployment
+```bash
+# Build and deploy manually
+npm run deploy
+```
+
+#### Setup GitHub Pages
+1. Go to your repository on GitHub
+2. Navigate to Settings → Pages
+3. Set Source to "GitHub Actions"
+4. The workflow will handle the rest automatically
+
+### Alternative Deployment Options
 
 - **[Vercel](https://vercel.com)** – Zero-config deployment for React apps  
 - **[Netlify](https://netlify.com)** – CI/CD with Git integration  
-- **GitHub Pages** – Using `gh-pages` branch for static hosting
 
-> **Note**: For production deployment, configure the `base` path in `vite.config.ts` if deploying under a subpath.
+> **Note**: The project is pre-configured with the correct base path for GitHub Pages deployment.
 
 ---
 
