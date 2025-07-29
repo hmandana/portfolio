@@ -1,7 +1,8 @@
 # 🧑‍💻 Personal Portfolio Website
 
-A high-performance, mobile-first portfolio website developed with **React**, **TypeScript**, and **Vite**. Designed to showcase professional experience, projects, and technical capabilities with an intuitive user experience and dark mode support.
+A high-performance, mobile-first portfolio website developed with **React**, **TypeScript**, **Tailwind CSS** and **Vite**. Designed to showcase professional experience, projects, and technical capabilities with an intuitive user experience and dark mode support.
 
+![Website Screenshot](src/assets/portfolio.png)
 ---
 
 ## 🚀 Tech Stack
