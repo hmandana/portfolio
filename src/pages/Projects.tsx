@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, useRef, lazy, Suspense } from 'react';
+import '../styles/projects-animations.css';
 
-// Sample project data
-type selfProjectsData = {
+// Enhanced type definitions
+interface Project {
   id: number;
   title: string;
   description: string;
   technologies: string[];
+  Company?: string;
+}
+
+interface PersonalProject extends Project {
   demoLink: string;
   githubLink: string;
-}[]
+}
+
+type SelfProjectsData = PersonalProject[];
 const projectsData = [
   {
     id: 1,
@@ -36,14 +43,14 @@ const projectsData = [
     title: 'CIB Identity Services',
     Company: 'JP Morgan Chase',
     description: 'A unified solution for authentication into multiple JP Morgan portals with modernized user experience using latest tools and technologies',
-    technologies: ['ReactJS', 'TypeScript', 'Redux', 'Cypress.IO', 'React testing library', 'IAM', 'JWT', 'AWS', 'Transmit Security', 'Material UI', 'Spring boot', 'JAVA', 'Linux', 'Jenkins', 'WCAG', 'JAWS', 'NVDA', 'Black Duck', 'SonarQube'],
+    technologies: ['ReactJS', 'TypeScript', 'Spring boot', 'JAVA', 'Redux', 'Cypress.IO', 'React testing library', 'IAM', 'JWT', 'AWS', 'Transmit Security', 'Material UI', 'Linux', 'Jenkins', 'WCAG', 'JAWS', 'NVDA', 'Black Duck', 'SonarQube'],
   },
   {
     id: 5,
     title: 'Trading Operations',
     Company: 'JP Morgan Chase',
     description: 'A content management system with Markdown support, categories, and user authentication.',
-    technologies: ['ReactJS', 'TypeScript', 'ContextAPI', 'Ag-Grid', 'React testing library', 'AWS', 'Material UI', 'Spring boot', 'JAVA', 'Jenkins', 'Black Duck', 'SonarQube', 'Grafana'],
+    technologies: ['ReactJS', 'TypeScript', 'JAVA', 'Spring boot', 'ContextAPI', 'Ag-Grid', 'React testing library', 'AWS', 'Material UI', 'Jenkins', 'Black Duck', 'SonarQube', 'Grafana'],
   },
   {
     id: 6,
@@ -132,12 +139,12 @@ const projectsData = [
     title: 'GENBAND Software Center (GSC)',
     Company: 'GENBAND',
     description: 'GENBAND Software Center (GSC) is a web-based application to provide customers with a valid support contract means to find and download software from GENBAND for their hardware that are supplied by the vendors to meet the CTQ specifications',
-    technologies: ['JAVA', 'J2EE', 'XHTML', 'CSS', 'JSF', 'PRIMEFACES', 'JPA', 'Spring MVC', 'EJB', 'Oracle JDBC', 'LDAP', 'Glassfish'],
+    technologies: ['JAVA', 'J2EE', 'XHTML', 'CSS', 'JSF Primefaces', 'JPA', 'Spring MVC', 'EJB', 'Oracle JDBC', 'LDAP', 'Glassfish'],
   },
 
 ];
 
-const selfProjectsData: selfProjectsData = [
+const selfProjectsData: SelfProjectsData = [
   {
     id: 1,
     title: 'My Portfolio',
@@ -146,178 +153,428 @@ const selfProjectsData: selfProjectsData = [
     demoLink: 'https://hmandana.github.io/portfolio-next-react/',
     githubLink: 'https://github.com/hmandana/portfolio-next-react',
   },
-]
-// Get unique technologies for filter
-const allTechnologies = Array.from(
-  new Set([...projectsData, ...selfProjectsData].flatMap(project => project.technologies))
-).sort();
+];
+
+// Dynamically load project card component
+const ProjectCard = lazy(() => import('./components/ProjectCard'));
+
+// Custom hooks for optimization
+const useDebounce = (value: string, delay: number) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+
+/**
+ * React hook that returns a boolean indicating whether the element
+ * referred to by the given ref is currently intersecting with the
+ * viewport.
+ *
+ * @param ref The ref to the element to observe.
+ * @param options Options for the IntersectionObserver.
+ * @returns A boolean indicating whether the element is currently
+ * intersecting with the viewport.
+ */
+const useIntersectionObserver = (ref: React.RefObject<HTMLDivElement | null>, options: IntersectionObserverInit) => {
+  const [isIntersecting, setIsIntersecting] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsIntersecting(entry.isIntersecting);
+    }, options);
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [ref, options]);
+
+  return isIntersecting;
+};
+
+/**
+ * Projects component that displays and filters a list of professional and personal projects.
+ * 
+ * Features:
+ * - Tabs to switch between professional and personal projects.
+ * - Search functionality to filter projects by title, description, company, or technology.
+ * - Technology filter pills to narrow down projects by selected technology.
+ * - Load more functionality to display additional projects.
+ * - Memoized computations for optimized performance.
+ * - Intersection observer for smooth scrolling.
+ * 
+ * State:
+ * - `selectedTech`: Currently selected technology for filtering.
+ * - `activeTab`: Currently active tab ('professional' or 'personal').
+ * - `searchQuery`: Search text input for filtering.
+ * - `showAll`: Boolean to control the display of all technologies.
+ * - `isAnimating`: Boolean to control animation visibility.
+ * - `displayCount`: Number of projects to display.
+ * - `isLoading`: Boolean to indicate loading state for the load more button.
+ * 
+ * Custom Hooks:
+ * - `useIntersectionObserver`: Checks if the component is visible in the viewport.
+ * - `useDebounce`: Debounces the search query to optimize performance.
+ */
 
 const Projects: React.FC = () => {
   const [selectedTech, setSelectedTech] = useState<string>('');
+  const [activeTab, setActiveTab] = useState<'professional' | 'personal'>('professional');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [showAll, setShowAll] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [displayCount, setDisplayCount] = useState(6);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Filter projects based on selected technology
-  const filteredProfessionalProjects = selectedTech
-    ? projectsData.filter(project => project.technologies.includes(selectedTech))
-    : projectsData;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isVisible = useIntersectionObserver(containerRef, { threshold: 0.1 });
 
-  const filteredPersonallProjects = selectedTech
-    ? selfProjectsData.filter(project => project.technologies.includes(selectedTech))
-    : selfProjectsData;
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+  const VISIBLE_COUNT = 5;
+  const LOAD_MORE_COUNT = 6;
+
+  // Memoized computations for better performance
+  const allTechnologies = useMemo(() =>
+    Array.from(
+      new Set([...projectsData, ...selfProjectsData].flatMap(project => project.technologies))
+    ).sort(),
+    []
+  );
+
+  const visibleTech = useMemo(() =>
+    showAll ? allTechnologies : allTechnologies.slice(0, VISIBLE_COUNT),
+    [showAll, allTechnologies]
+  );
+
+  // Enhanced filtering with search and technology filter
+  const filteredProfessionalProjects = useMemo(() => {
+    let filtered = projectsData;
+
+    if (selectedTech) {
+      filtered = filtered.filter(project => project.technologies.includes(selectedTech));
+    }
+
+    if (debouncedSearchQuery) {
+      const query = debouncedSearchQuery.toLowerCase();
+      filtered = filtered.filter(project =>
+        project.title.toLowerCase().includes(query) ||
+        project.description.toLowerCase().includes(query) ||
+        project.Company?.toLowerCase().includes(query) ||
+        project.technologies.some(tech => tech.toLowerCase().includes(query))
+      );
+    }
+
+    return filtered;
+  }, [selectedTech, debouncedSearchQuery]);
+
+  const filteredPersonalProjects = useMemo(() => {
+    let filtered = selfProjectsData;
+
+    if (selectedTech) {
+      filtered = filtered.filter(project => project.technologies.includes(selectedTech));
+    }
+
+    if (debouncedSearchQuery) {
+      const query = debouncedSearchQuery.toLowerCase();
+      filtered = filtered.filter(project =>
+        project.title.toLowerCase().includes(query) ||
+        project.description.toLowerCase().includes(query) ||
+        project.technologies.some(tech => tech.toLowerCase().includes(query))
+      );
+    }
+
+    return filtered;
+  }, [selectedTech, debouncedSearchQuery]);
+
+  // Optimized handlers with useCallback
+  const handleTechFilter = useCallback((tech: string) => {
+    setIsAnimating(true);
+    setSelectedTech(tech);
+    setDisplayCount(LOAD_MORE_COUNT);
+    setTimeout(() => setIsAnimating(false), 300);
+  }, []);
+
+  const handleTabChange = useCallback((tab: 'professional' | 'personal') => {
+    setIsAnimating(true);
+    setActiveTab(tab);
+    setDisplayCount(LOAD_MORE_COUNT);
+    setTimeout(() => setIsAnimating(false), 300);
+  }, []);
+
+  const handleLoadMore = useCallback(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setDisplayCount(prev => prev + LOAD_MORE_COUNT);
+      setIsLoading(false);
+    }, 500);
+  }, []);
+
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    setDisplayCount(LOAD_MORE_COUNT);
+  }, []);
+
+  const clearFilters = useCallback(() => {
+    setSelectedTech('');
+    setSearchQuery('');
+    setDisplayCount(LOAD_MORE_COUNT);
+  }, []);
+
+  // Get current filtered projects and counts
+  const currentProjects = activeTab === 'professional' ? filteredProfessionalProjects : filteredPersonalProjects;
+  const displayedProjects = currentProjects.slice(0, displayCount);
+  const hasMoreProjects = currentProjects.length > displayCount;
+  const professionalCount = filteredProfessionalProjects.length;
+  const personalCount = filteredPersonalProjects.length;
+
+  // Effect for smooth scrolling on filter changes
+  useEffect(() => {
+    if (isVisible && containerRef.current) {
+      containerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [selectedTech, activeTab, isVisible]);
 
   return (
-    <div>
+    <div className="w-full p-6" ref={containerRef}>
+      {/* Page Title with Stats */}
+      <div className="text-center mb-8">
+        <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-2 animate-fade-in">
+          My Projects
+        </h1>
+        <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">
+          Explore my professional and personal work
+        </p>
+        <div className="flex justify-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+          <span>📊 {projectsData.length + selfProjectsData.length} Total Projects</span>
+          <span>🛠️ {allTechnologies.length} Technologies</span>
+          <span>🏢 {Array.from(new Set(projectsData.map(p => p.Company))).length} Companies</span>
+        </div>
+      </div>
 
+      {/* Enhanced Search and Filter Section */}
+      <div className="w-full max-w-4xl mx-auto mb-8">
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="🔍 Search projects by title, description, company, or technology..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className="w-full px-4 py-3 pl-12 pr-16 text-gray-800 dark:text-white bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-cyan-500 focus:border-transparent transition-all duration-300 shadow-sm hover:shadow-md"
+            />
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            {(searchQuery || selectedTech) && (
+              <button
+                type="button"
+                title="clear filters"
+                onClick={clearFilters}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
+        </div>
 
-      {/* Filter Section */}
-      <div className="mb-8">
-        <div className="flex flex-wrap justify-center gap-2">
-          <button
-            onClick={() => setSelectedTech('')}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-300 ${selectedTech === ''
-              ? 'bg-blue-600 dark:bg-cyan-600 text-white'
-              : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
-              }`}
-          >
-            All
-          </button>
+        {/* Technology Filter Pills */}
+        <section id="filters" className="mb-6">
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 text-center">
+              Filter by Technology
+            </h3>
+            <div className="flex flex-wrap justify-center gap-2">
+              <button
+                type="button"
+                onClick={() => handleTechFilter('')}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105 ${selectedTech === ''
+                  ? 'bg-blue-600 dark:bg-cyan-600 text-white shadow-lg'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+                  }`}>
+                All Technologies
+              </button>
 
-          {allTechnologies.map(tech => (
+              {visibleTech.map(tech => (
+                <button
+                  type="button"
+                  key={tech}
+                  onClick={() => handleTechFilter(tech)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105 ${selectedTech === tech
+                    ? 'bg-blue-600 dark:bg-cyan-600 text-white shadow-lg'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+                    }`}>
+                  {tech}
+                </button>
+              ))}
+            </div>
+
+            {allTechnologies.length > VISIBLE_COUNT && (
+              <div className="text-center mt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowAll(!showAll)}
+                  className="text-sm text-blue-600 dark:text-cyan-400 hover:underline transition-colors duration-300">
+                  {showAll ? '▲ Show Less Technologies' : '▼ Show More Technologies'}
+                </button>
+              </div>
+            )}
+          </div>
+        </section>
+      </div>
+
+      {/* Tab Navigation & Project Grid */}
+      <div className="w-full max-w-7xl mx-auto">
+        {/* Toggle Switch Container */}
+        <div className="flex justify-center mb-8 px-4">
+          <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-4 bg-white dark:bg-gray-800 px-4 py-3 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
+
+            {/* Professional Label */}
             <button
-              key={tech}
-              onClick={() => setSelectedTech(tech)}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-300 ${selectedTech === tech
-                ? 'bg-blue-600 dark:bg-cyan-600 text-white'
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+              type="button"
+              onClick={() => handleTabChange('professional')}
+              className={`flex items-center gap-3 p-2 rounded-lg transition-all duration-300 ${activeTab === 'professional'
+                  ? 'text-blue-600 dark:text-cyan-400 scale-105'
+                  : 'text-gray-500 dark:text-gray-500 scale-100 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
             >
-              {tech}
+              <div
+                className={`p-2 rounded-lg transition-all duration-300 ${activeTab === 'professional'
+                    ? 'bg-blue-100 dark:bg-cyan-900'
+                    : 'bg-gray-100 dark:bg-gray-700'
+                  }`}
+              >
+                <span role="img" aria-label="briefcase" className="text-xl">💼</span>
+              </div>
+              <div className="text-left">
+                <span className="font-semibold text-sm">Professional</span>
+                <span className="block text-xs opacity-75">{professionalCount} projects</span>
+              </div>
             </button>
-          ))}
-        </div>
-      </div>
-      {filteredProfessionalProjects.length > 0 && (
-        <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center text-gray-800 dark:text-white">
-          My Professional Projects
-        </h1>
-      )}
-      {/* Professional rojects Grid */}
-      <div className="flex flex-wrap justify-center gap-2">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProfessionalProjects.map(project => (
-            <div
-              key={project.id}
-              className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+
+            {/* Toggle */}
+            <div className="flex justify-center items-center flex-shrink-0">
+              <label className="relative inline-block w-14 h-8 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={activeTab === 'personal'}
+                  onChange={() =>
+                    handleTabChange(activeTab === 'professional' ? 'personal' : 'professional')
+                  }
+                  className="sr-only peer"
+                  role="switch"
+                  aria-checked={activeTab === 'personal'}
+                  aria-label="Toggle between professional and personal projects"
+                />
+                <div className="w-14 h-8 bg-blue-600 dark:bg-cyan-500 rounded-full peer-focus:ring-2 peer-focus:ring-offset-2 peer-focus:ring-blue-400 dark:peer-focus:ring-cyan-400 transition-colors"></div>
+                <div className="absolute top-[2px] left-[2px] w-7 h-7 bg-white rounded-full transition-transform duration-300 transform peer-checked:translate-x-6 shadow-md flex items-center justify-center text-sm text-blue-600 dark:text-cyan-600">
+                  {activeTab === 'professional' ? '💼' : '🚀'}
+                </div>
+              </label>
+            </div>
+
+            {/* Personal Label */}
+            <button
+              type="button"
+              onClick={() => handleTabChange('personal')}
+              className={`flex items-center gap-3 p-2 rounded-lg transition-all duration-300 ${activeTab === 'personal'
+                  ? 'text-blue-600 dark:text-cyan-400 scale-105'
+                  : 'text-gray-500 dark:text-gray-500 scale-100 hover:bg-gray-100 dark:hover:bg-gray-700'
+                }`}
             >
-              {/* Project Content */}
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-white">
-                  {project.title}
-                </h3>
-
-                <p className="text-gray-600 dark:text-gray-300 mb-4 h-20 overflow-hidden">
-                  {project.description}
-                </p>
-
-                {/* Technologies */}
-                <div className="mb-4">
-                  <div className="flex flex-wrap gap-2">
-                    {project.technologies.map(tech => (
-                      <span
-                        key={`${project.id}-${tech}`}
-                        className="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded-md"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+              <div
+                className={`p-2 rounded-lg transition-all duration-300 ${activeTab === 'personal'
+                    ? 'bg-blue-100 dark:bg-cyan-900'
+                    : 'bg-gray-100 dark:bg-gray-700'
+                  }`}
+              >
+                <span role="img" aria-label="rocket" className="text-xl">🚀</span>
               </div>
-            </div>
+              <div className="text-left">
+                <span className="font-semibold text-sm">Personal</span>
+                <span className="block text-xs opacity-75">{personalCount} projects</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+
+
+        {/* Animated Project Grid */}
+        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
+          {displayedProjects.map((project, index) => (
+            <Suspense key={`${project.id}-${activeTab}`} fallback={<div className="animate-pulse bg-gray-300 dark:bg-gray-700 h-64 rounded-lg"></div>}>
+              <ProjectCard
+                project={project as PersonalProject | Project}
+                index={index}
+              />
+            </Suspense>
           ))}
         </div>
-      </div>
 
-
-
-
-      {/* Personal Projects Grid */}
-      {filteredPersonallProjects.length > 0 && (
-        <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center text-gray-800 dark:text-white">
-          My Personal Projects
-        </h1>
-      )}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-        {filteredPersonallProjects.map(project => (
-          <div
-            key={project.id}
-            className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
-          >
-
-            {/* Project Content */}
-            <div className="p-6">
-              <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-white">
-                {project.title}
-              </h3>
-
-              <p className="text-gray-600 dark:text-gray-300 mb-4 h-20 overflow-hidden">
-                {project.description}
-              </p>
-
-              {/* Technologies */}
-              <div className="mb-4">
-                <div className="flex flex-wrap gap-2">
-                  {project.technologies.map(tech => (
-                    <span
-                      key={`${project.id}-${tech}`}
-                      className="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded-md"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Links */}
-              <div className="flex justify-between">
-                <a
-                  href={project.demoLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white text-sm font-medium rounded-md transition-colors duration-300"
-                >
-                  Live Demo
-                </a>
-                <a
-                  href={project.githubLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white text-sm font-medium rounded-md transition-colors duration-300"
-                >
-                  GitHub
-                </a>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-      {/* Empty State */}
-      {filteredProfessionalProjects.length === 0 && filteredPersonallProjects.length === 0 && (
-        <div className="text-center py-10">
-          <p className="text-gray-600 dark:text-gray-400 text-lg">
-            No projects found with the selected technology.
-          </p>
-          <button
-            onClick={() => setSelectedTech('')}
-            className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white font-medium rounded-md transition-colors duration-300"
-          >
-            Show All Projects
-          </button>
+        {/* Load More Button and Empty State */}
+        <div className="text-center mt-12">
+          {hasMoreProjects ? (
+            <button
+              type="button"
+              onClick={handleLoadMore}
+              disabled={isLoading}
+              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center mx-auto">
+              {isLoading ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Loading...
+                </>
+              ) : (
+                '▼ Load More Projects'
+              )}
+            </button>
+          ) : (
+            currentProjects.length > 0 && (
+              <p className="text-gray-500 dark:text-gray-400">You've reached the end!</p>
+            )
+          )}
         </div>
-      )}
+
+        {/* Empty State */}
+        {currentProjects.length === 0 && (
+          <div className="text-center py-16">
+            <div className="mb-4 text-5xl">🤷‍♂️</div>
+            <p className="text-gray-600 dark:text-gray-400 text-xl mb-4">
+              No projects found matching your criteria.
+            </p>
+            <button
+              type="button"
+              onClick={clearFilters}
+              className="mt-4 px-5 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white font-medium rounded-lg transition-colors duration-300 transform hover:scale-105">
+              Clear Filters and Show All
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
 
 export default Projects;
-

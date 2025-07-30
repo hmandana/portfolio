@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import '../styles/projects-animations.css';
 
 // Example JSON data (in a real app, import or fetch this)
 const aboutData = {
@@ -119,26 +120,138 @@ workExperience: [
   ]
 };
 
+/**
+ * The About component renders the About page, which displays information about the author,
+ * including work experience, education, certifications, interests, and contact information.
+ * It also includes a progress indicator that shows how much of the page has been scrolled.
+ * The component uses Intersection Observers to track which sections are in view and
+ * conditionally render the sections and their corresponding navigation items.
+ * The component also uses a custom hook to track the active section and scroll to it on click.
+ */
 const About: React.FC = () => {
-  const [activeJob, setActiveJob] = React.useState<number | null>(null);
+  const [activeJob, setActiveJob] = useState<number | null>(null);
+  const [activeSection, setActiveSection] = useState('about');
+  const [isScrolling, setIsScrolling] = useState(false);
+  const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
+  const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({});
+
+  // Intersection Observer for section visibility
+  useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+    const sections = ['about', 'work-experience', 'education', 'certifications', 'interests', 'contact'];
+
+    sections.forEach((section) => {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setVisibleSections(prev => new Set([...prev, section]));
+            if (!isScrolling) {
+              setActiveSection(section);
+            }
+          } else {
+            setVisibleSections(prev => {
+              const newSet = new Set(prev);
+              newSet.delete(section);
+              return newSet;
+            });
+          }
+        },
+        { threshold: 0.3 }
+      );
+
+      const element = sectionRefs.current[section];
+      if (element) {
+        observer.observe(element);
+        observers.push(observer);
+      }
+    });
+
+    return () => observers.forEach(observer => observer.disconnect());
+  }, [isScrolling]);
+
+  // Smooth scroll to section
+  const scrollToSection = useCallback((sectionId: string) => {
+    setIsScrolling(true);
+    setActiveSection(sectionId);
+    
+    const element = sectionRefs.current[sectionId];
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    
+    setTimeout(() => setIsScrolling(false), 1000);
+  }, []);
+
 
   return (
-    <div className="flex">
-      {/* Left Navigation */}
-      <nav className="w-1/4 hidden md:block sticky top-0 h-screen bg-gray-100 dark:bg-gray-800 p-4">
-        <ul className="space-y-4">
-          <li><a href="#about" className="text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-cyan-400">About Me</a></li>
-          <li><a href="#work-experience" className="text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-cyan-400">Work Experience</a></li>
-          <li><a href="#education" className="text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-cyan-400">Education</a></li>
-          <li><a href="#certifications" className="text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-cyan-400">Certifications</a></li>
-          <li><a href="#interests" className="text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-cyan-400">Interests</a></li>
-          <li><a href="#contact" className="text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-cyan-400">Contact Me</a></li>
+    <div className="flex relative animate-fadeIn">
+      {/* Dynamic Background Effects */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        {[...Array(15)].map((_, i) => (
+          <div
+            key={i}
+            className={`absolute w-1 h-1 bg-blue-400 dark:bg-cyan-400 rounded-full opacity-10 animate-pulse`}
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${3 + Math.random() * 4}s`
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Enhanced Left Navigation */}
+      <nav className="w-1/4 hidden md:block sticky top-0 h-screen bg-gray-100/95 dark:bg-gray-800/95 backdrop-blur-sm p-6 border-r border-gray-200 dark:border-gray-700">
+        <div className="mb-8">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Navigation</h3>
+        </div>
+        <ul className="space-y-3">
+          {[
+            { id: 'about', label: 'About Me', icon: '👋' },
+            { id: 'work-experience', label: 'Experience', icon: '💼' },
+            { id: 'education', label: 'Education', icon: '🎓' },
+            { id: 'certifications', label: 'Certifications', icon: '🏆' },
+            { id: 'interests', label: 'Interests', icon: '❤️' },
+            { id: 'contact', label: 'Contact', icon: '📞' }
+          ].map((item) => (
+            <li key={item.id}>
+              <button
+                onClick={() => scrollToSection(item.id)}
+                className={`w-full flex items-center px-4 py-3 rounded-lg text-left transition-all duration-300 group hover:transform hover:scale-105 ${
+                  activeSection === item.id
+                    ? 'bg-blue-600 dark:bg-cyan-600 text-white shadow-lg'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                }`}
+              >
+                <span className="mr-3 text-lg group-hover:animate-bounce">{item.icon}</span>
+                <span className="font-medium">{item.label}</span>
+                {visibleSections.has(item.id) && (
+                  <div className="ml-auto w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                )}
+              </button>
+            </li>
+          ))}
         </ul>
+        
+        {/* Progress Indicator */}
+        <div className="mt-8 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+          <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Page Progress</h4>
+          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+            <div 
+              className="bg-blue-600 dark:bg-cyan-600 h-2 rounded-full transition-all duration-500"
+              style={{ width: `${(visibleSections.size / 6) * 100}%` }}
+            />
+          </div>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            {visibleSections.size} of 6 sections viewed
+          </p>
+        </div>
       </nav>
 
       {/* Main Content */}
       <div className="w-full md:w-3/4 p-6">
-        <section id="about" className="mb-12">
+        <section id="about" className="mb-12" ref={el => { sectionRefs.current['about'] = el; }}>
           <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center text-gray-800 dark:text-white">About Me</h1>
           <div className="flex flex-col md:flex-row items-center md:items-start mb-12 gap-8">
             <div className="w-48 h-48 rounded-full overflow-hidden bg-gray-300 dark:bg-gray-700 flex-shrink-0 mb-6 md:mb-0 flex items-center justify-center text-gray-500 dark:text-gray-400">
@@ -154,7 +267,7 @@ const About: React.FC = () => {
           </div>
         </section>
 
-        <section id="work-experience" className="mb-12">
+        <section id="work-experience" className="mb-12" ref={el => { sectionRefs.current['work-experience'] = el; }}>
           <h2 className="text-2xl font-semibold mb-8 text-gray-800 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2 text-center">
             Work Experience
           </h2>
@@ -209,7 +322,7 @@ const About: React.FC = () => {
           </div>
         </section>
 
-        <section id="education" className="mb-12">
+        <section id="education" className="mb-12" ref={el => { sectionRefs.current['education'] = el; }}>
           <h2 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">Education</h2>
           {aboutData.education.map((edu, idx) => (
             <div key={idx} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md transition-shadow hover:shadow-lg mb-4">
@@ -229,7 +342,7 @@ const About: React.FC = () => {
           ))}
         </section>
 
-        <section id="certifications" className="mb-12">
+        <section id="certifications" className="mb-12" ref={el => { sectionRefs.current['certifications'] = el; }}>
           <h2 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">Certifications</h2>
           {aboutData.certifications.map((cert, idx) => (
             <div key={idx} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md transition-shadow hover:shadow-lg mb-4">
@@ -249,7 +362,7 @@ const About: React.FC = () => {
           ))}
         </section>
 
-        <section id="interests" className="mb-12">
+        <section id="interests" className="mb-12" ref={el => { sectionRefs.current['interests'] = el; }}>
           <h2 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">Interests</h2>
           <div className="flex flex-wrap gap-4">
             {aboutData.interests.map((interest, idx) => (
@@ -260,7 +373,7 @@ const About: React.FC = () => {
           </div>
         </section>
 
-        <section id="contact" className="mb-12">
+        <section id="contact" className="mb-12" ref={el => { sectionRefs.current['contact'] = el; }}>
           <h2 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">Contact Me</h2>
           <div className="flex flex-col md:flex-row justify-between gap-6">
             {aboutData.contact.map((item, idx) => (

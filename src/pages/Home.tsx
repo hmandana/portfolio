@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { skillImages } from '../assets/skills';
+import '../styles/projects-animations.css';
 
 // Example JSON data (in a real app, import or fetch this)
 const homeData = {
@@ -18,6 +19,10 @@ const homeData = {
     { name: 'Redux', image: skillImages.redux },
     { name: 'Node.js', image: skillImages.nodejs },
     { name: 'GraphQL', image: skillImages.graphql },
+    { name: 'Python', image: skillImages.python },
+    { name: 'Java', image: skillImages.java },
+    { name: 'Kotlin', image: skillImages.kotlin },
+    { name: 'Spring Boot', image: skillImages['spring-boot'] },
     { name: 'Next.js', image: skillImages.nextjs },
     { name: 'Tailwind CSS', image: skillImages.tailwind },
     { name: 'Bootstrap', image: skillImages.bootstrap },
@@ -36,10 +41,6 @@ const homeData = {
     { name: 'Selenium', image: skillImages.selenium },
     { name: 'Cypress', image: skillImages.cypress },
     { name: 'Playwright', image: skillImages.playwright },
-    { name: 'Python', image: skillImages.python },
-    { name: 'Java', image: skillImages.java },
-    { name: 'Kotlin', image: skillImages.kotlin },
-    { name: 'Spring Boot', image: skillImages['spring-boot'] },
     { name: 'Docker', image: skillImages.docker },
     { name: 'Kubernetes', image: skillImages.kubernetes },
     { name: 'AWS', image: skillImages.aws },
@@ -53,41 +54,162 @@ const homeData = {
 };
 
 
+/**
+ * The Home component is the landing page of the website, showcasing a person's experience, skills, and projects.
+ *
+ * It displays a dynamic greeting, a rotating role display, and a dynamic introduction. It also includes
+ * a section with enhanced action buttons and a section with quick stats.
+ *
+ * The component uses a combination of React hooks, CSS animations, and SVG icons to create a visually appealing
+ * and interactive experience.
+ *
+ * @returns {JSX.Element} The Home component.
+ */
 const Home: React.FC = () => {
+  const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
+  const [isTyping, setIsTyping] = useState(true);
+  const [displayedText, setDisplayedText] = useState('');
+
+  const roles = [
+    'Full-Stack Engineer',
+    'React Developer',
+    'AWS Cloud Expert',
+    'UI/UX Enthusiast',
+    'DevOps Engineer'
+  ];
+
+  // Typewriter effect for roles
+  useEffect(() => {
+    const currentRole = roles[currentRoleIndex];
+    let index = 0;
+    setIsTyping(true);
+    setDisplayedText('');
+
+    const typeInterval = setInterval(() => {
+      if (index < currentRole.length) {
+        setDisplayedText(currentRole.slice(0, index + 1));
+        index++;
+      } else {
+        setIsTyping(false);
+        clearInterval(typeInterval);
+        
+        // Wait before starting next role
+        setTimeout(() => {
+          setCurrentRoleIndex((prev) => (prev + 1) % roles.length);
+        }, 2000);
+      }
+    }, 100);
+
+    return () => clearInterval(typeInterval);
+  }, [currentRoleIndex]);
+
+  // Mouse tracking for interactive effects
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    // Future: mouse tracking can be used for interactive elements
+    console.log('Mouse position:', e.clientX, e.clientY);
+  }, []);
+
+  const currentIntroIndex = currentRoleIndex % homeData.intro.length;
 
   return (
-    <div className="animate-fadeIn">
+    <div className="animate-fadeIn relative overflow-hidden" onMouseMove={handleMouseMove}>
+      {/* Dynamic Background Particles */}
+      <div className="absolute inset-0 pointer-events-none">
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-2 h-2 bg-blue-400 dark:bg-cyan-400 rounded-full opacity-20 animate-pulse"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${2 + Math.random() * 3}s`
+            }}
+          />
+        ))}
+      </div>
+
       {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center py-16 md:py-24 text-center">
-        <h1 className="text-4xl md:text-6xl font-bold mb-4 text-gray-800 dark:text-white">
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-500 dark:from-blue-400 dark:to-cyan-400">
+      <section className="relative flex flex-col items-center justify-center py-16 md:py-24 text-center min-h-[80vh]">
+        {/* Interactive greeting */}
+        <div className="mb-6">
+          <span className="text-lg text-gray-600 dark:text-gray-400 animate-fade-in-delay-1">
+            👋 Hello, I'm
+          </span>
+        </div>
+
+        <h1 className="text-4xl md:text-6xl font-bold mb-4 text-gray-800 dark:text-white relative">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-500 dark:from-blue-400 dark:to-cyan-400 animate-fade-in-delay-2">
             {homeData.name}
           </span>
         </h1>
 
-        {/* Brief Introduction */}
-        <div className="max-w-2xl mb-10 px-4">
-          {homeData.intro.map((line, idx) => (
-            <p key={idx} className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
-              {line}
-            </p>
-          ))}
+        {/* Dynamic Role Display */}
+        <div className="mb-8 h-12 flex items-center justify-center">
+          <span className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 font-medium">
+            I'm a {' '}
+          </span>
+          <span className="text-xl md:text-2xl font-bold text-blue-600 dark:text-cyan-400 ml-2 min-w-[200px] text-left">
+            {displayedText}
+            {isTyping && <span className="animate-pulse">|</span>}
+          </span>
         </div>
 
-        {/* Call-to-action Buttons */}
-        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+        {/* Dynamic Introduction */}
+        <div className="max-w-3xl mb-10 px-4">
+          <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed animate-fade-in-delay-3">
+            {homeData.intro[currentIntroIndex]}
+          </p>
+        </div>
+
+        {/* Enhanced Action Buttons */}
+        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 animate-fade-in-delay-3">
           <Link
             to="/projects"
-            className="px-8 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white font-medium rounded-lg transition-colors duration-300 transform hover:scale-105"
+            className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl overflow-hidden"
           >
-            View Projects
+            <span className="relative z-10 flex items-center justify-center">
+              <svg className="w-5 h-5 mr-2 group-hover:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
+              View My Projects
+            </span>
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </Link>
+          
           <Link
             to="/about"
-            className="px-8 py-3 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-medium rounded-lg transition-colors duration-300 transform hover:scale-105"
+            className="group relative px-8 py-4 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl border-2 border-transparent hover:border-blue-400 dark:hover:border-cyan-400"
           >
-            About Me
+            <span className="flex items-center justify-center">
+              <svg className="w-5 h-5 mr-2 group-hover:animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              About Me
+            </span>
           </Link>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl animate-fade-in-delay-3">
+          <div className="text-center group cursor-pointer transform hover:scale-105 transition-all duration-300">
+            <div className="text-3xl font-bold text-blue-600 dark:text-cyan-400 group-hover:animate-pulse">
+              10+
+            </div>
+            <div className="text-gray-600 dark:text-gray-400 mt-1">Years Experience</div>
+          </div>
+          <div className="text-center group cursor-pointer transform hover:scale-105 transition-all duration-300">
+            <div className="text-3xl font-bold text-blue-600 dark:text-cyan-400 group-hover:animate-pulse">
+              {homeData.skills.length}+
+            </div>
+            <div className="text-gray-600 dark:text-gray-400 mt-1">Technologies</div>
+          </div>
+          <div className="text-center group cursor-pointer transform hover:scale-105 transition-all duration-300">
+            <div className="text-3xl font-bold text-blue-600 dark:text-cyan-400 group-hover:animate-pulse">
+              100+
+            </div>
+            <div className="text-gray-600 dark:text-gray-400 mt-1">Projects Delivered</div>
+          </div>
         </div>
       </section>
       {/* Spacer for sticky section */}
