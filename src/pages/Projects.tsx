@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback, useEffect, useRef, lazy, Suspense } from 'react';
+import ProjectDetailsModal from '../components/ProjectDetailsModal';
 import '../styles/projects-animations.css';
 
 // Enhanced type definitions
@@ -21,21 +22,21 @@ const projectsData = [
     id: 1,
     title: 'EG Console',
     Company: 'Expedia Group',
-    description: 'The Expedia Group (EG) Console is a unified developer platform that provides partners, developers, and internal teams with access to tools, APIs, and resources to build, manage, and optimize travel-related integrations with Expedia Group.',
+    description: 'The Expedia Group Console is a unified platform that transform the travel ecosystem into a composable, developer-first, and partner-driven platform, enabling any company—from startups to global enterprises—to build, enhance, and scale travel experiences using Expedia’s infrastructure, data, and services.',
     technologies: ['ReactJS', 'TypeScript', 'Kotlin JAVA', 'Apollo GraphQL', 'Qiankun', 'HapiJS', 'Cypress', 'Playwright', 'React testing library', 'NX/yarn monorepo workspace', 'Catchpoint', 'Datadog', 'Python', 'Github Actions', 'Docker', 'Kubernetes', 'AWS', 'Spinnaker', 'Jenkins', 'Figma', 'Miro'],
   },
   {
     id: 2,
     title: 'Lodging Connectivity',
     Company: 'Expedia Group',
-    description: 'A Kanban-style task management application with drag and drop functionality and team collaboration features.',
+    description: 'Lodging Connectivity enables seamless integration between lodging partners and Expedia’s OpenWorld platform, providing real-time synchronization of rates, availability, reservations, and content via APIs. It supports onboarding, monitoring, and analytics through the Connectivity Hub, driving operational efficiency, data accuracy, and scalable, personalized travel experiences across global distribution channels.',
     technologies: ['React', 'TypeScript', 'Apollo GraphQL', 'Playwright', 'Datadog', 'Github Actions', 'Docker', 'Kubernetes', 'AWS', 'Spinnaker', 'Figma', 'Miro'],
   },
   {
     id: 3,
     title: 'Unified Login',
     Company: 'Expedia Group',
-    description: 'Real-time weather application using weather API with location services and 5-day forecasts.',
+    description: 'Unified Login provides a centralized, secure authentication experience across all Expedia Group brands and partner platforms. It leverages OAuth2/OIDC standards to streamline user access, enable single sign-on (SSO), and support multi-tenant identity federation. Unified Login improves security, simplifies user management, and enables consistent, cross-brand personalization and session continuity.',
     technologies: ['React', 'TypeScript', 'JAVA', 'Spring Boot', 'Kotlin JAVA', 'Apollo GraphQL', 'OAuth2', 'JWT', 'Playwright', 'Datadog', 'Github Actions', 'Docker', 'Kubernetes', 'AWS', 'Spinnaker', 'Figma', 'Miro'],
   },
   {
@@ -205,33 +206,8 @@ const useIntersectionObserver = (ref: React.RefObject<HTMLDivElement | null>, op
   return isIntersecting;
 };
 
-/**
- * Projects component that displays and filters a list of professional and personal projects.
- * 
- * Features:
- * - Tabs to switch between professional and personal projects.
- * - Search functionality to filter projects by title, description, company, or technology.
- * - Technology filter pills to narrow down projects by selected technology.
- * - Load more functionality to display additional projects.
- * - Memoized computations for optimized performance.
- * - Intersection observer for smooth scrolling.
- * 
- * State:
- * - `selectedTech`: Currently selected technology for filtering.
- * - `activeTab`: Currently active tab ('professional' or 'personal').
- * - `searchQuery`: Search text input for filtering.
- * - `showAll`: Boolean to control the display of all technologies.
- * - `isAnimating`: Boolean to control animation visibility.
- * - `displayCount`: Number of projects to display.
- * - `isLoading`: Boolean to indicate loading state for the load more button.
- * 
- * Custom Hooks:
- * - `useIntersectionObserver`: Checks if the component is visible in the viewport.
- * - `useDebounce`: Debounces the search query to optimize performance.
- */
-
 const Projects: React.FC = () => {
-  const [selectedTech, setSelectedTech] = useState<string>('');
+  const [selectedTechs, setSelectedTechs] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<'professional' | 'personal'>('professional');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [showAll, setShowAll] = useState(false);
@@ -263,46 +239,69 @@ const Projects: React.FC = () => {
   const filteredProfessionalProjects = useMemo(() => {
     let filtered = projectsData;
 
-    if (selectedTech) {
-      filtered = filtered.filter(project => project.technologies.includes(selectedTech));
-    }
-
-    if (debouncedSearchQuery) {
-      const query = debouncedSearchQuery.toLowerCase();
-      filtered = filtered.filter(project =>
-        project.title.toLowerCase().includes(query) ||
-        project.description.toLowerCase().includes(query) ||
-        project.Company?.toLowerCase().includes(query) ||
-        project.technologies.some(tech => tech.toLowerCase().includes(query))
+    if (selectedTechs.length > 0) {
+      filtered = filtered.filter(project => 
+        selectedTechs.some(tech => project.technologies.includes(tech))
       );
     }
 
+    if (debouncedSearchQuery) {
+      // Support multi-keyword search: split on comma or space
+      const keywords = debouncedSearchQuery.split(/[\s,]+/).map(q => q.toLowerCase()).filter(Boolean);
+      if (keywords.length > 0) {
+        filtered = filtered.filter(project =>
+          keywords.every(query =>
+            project.title.toLowerCase().includes(query)
+            || project.description.toLowerCase().includes(query)
+            || project.Company?.toLowerCase().includes(query)
+            || project.technologies.some(tech => tech.toLowerCase().includes(query))
+          )
+        );
+      }
+    }
+
     return filtered;
-  }, [selectedTech, debouncedSearchQuery]);
+  }, [selectedTechs, debouncedSearchQuery]);
 
   const filteredPersonalProjects = useMemo(() => {
     let filtered = selfProjectsData;
 
-    if (selectedTech) {
-      filtered = filtered.filter(project => project.technologies.includes(selectedTech));
-    }
-
-    if (debouncedSearchQuery) {
-      const query = debouncedSearchQuery.toLowerCase();
-      filtered = filtered.filter(project =>
-        project.title.toLowerCase().includes(query) ||
-        project.description.toLowerCase().includes(query) ||
-        project.technologies.some(tech => tech.toLowerCase().includes(query))
+    if (selectedTechs.length > 0) {
+      filtered = filtered.filter(project => 
+        selectedTechs.some(tech => project.technologies.includes(tech))
       );
     }
 
+    if (debouncedSearchQuery) {
+      const keywords = debouncedSearchQuery.split(/[\s,]+/).map(q => q.toLowerCase()).filter(Boolean);
+      if (keywords.length > 0) {
+        filtered = filtered.filter(project =>
+          keywords.every(query =>
+            project.title.toLowerCase().includes(query)
+            || project.description.toLowerCase().includes(query)
+            || project.technologies.some(tech => tech.toLowerCase().includes(query))
+          )
+        );
+      }
+    }
+
     return filtered;
-  }, [selectedTech, debouncedSearchQuery]);
+  }, [selectedTechs, debouncedSearchQuery]);
 
   // Optimized handlers with useCallback
   const handleTechFilter = useCallback((tech: string) => {
     setIsAnimating(true);
-    setSelectedTech(tech);
+    if (tech === '') {
+      // Clear all selected technologies
+      setSelectedTechs([]);
+    } else {
+      // Toggle technology selection
+      setSelectedTechs(prev => 
+        prev.includes(tech) 
+          ? prev.filter(t => t !== tech)
+          : [...prev, tech]
+      );
+    }
     setDisplayCount(LOAD_MORE_COUNT);
     setTimeout(() => setIsAnimating(false), 300);
   }, []);
@@ -328,7 +327,7 @@ const Projects: React.FC = () => {
   }, []);
 
   const clearFilters = useCallback(() => {
-    setSelectedTech('');
+    setSelectedTechs([]);
     setSearchQuery('');
     setDisplayCount(LOAD_MORE_COUNT);
   }, []);
@@ -336,6 +335,12 @@ const Projects: React.FC = () => {
   // Get current filtered projects and counts
   const currentProjects = activeTab === 'professional' ? filteredProfessionalProjects : filteredPersonalProjects;
   const displayedProjects = currentProjects.slice(0, displayCount);
+
+  const [selectedProject, setSelectedProject] = useState<Project | PersonalProject | null>(null);
+  const handleProjectClick = useCallback((project: Project | PersonalProject) => {
+    setSelectedProject(project);
+  }, []);
+  const handleCloseModal = useCallback(() => setSelectedProject(null), []);
   const hasMoreProjects = currentProjects.length > displayCount;
   const professionalCount = filteredProfessionalProjects.length;
   const personalCount = filteredPersonalProjects.length;
@@ -345,7 +350,7 @@ const Projects: React.FC = () => {
     if (isVisible && containerRef.current) {
       containerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, [selectedTech, activeTab, isVisible]);
+  }, [selectedTechs, activeTab, isVisible]);
 
   return (
     <div className="w-full p-6" ref={containerRef}>
@@ -381,7 +386,7 @@ const Projects: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
-            {(searchQuery || selectedTech) && (
+            {(searchQuery || selectedTechs.length > 0) && (
               <button
                 type="button"
                 title="clear filters"
@@ -406,7 +411,7 @@ const Projects: React.FC = () => {
               <button
                 type="button"
                 onClick={() => handleTechFilter('')}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105 ${selectedTech === ''
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105 ${selectedTechs.length === 0
                   ? 'bg-blue-600 dark:bg-cyan-600 text-white shadow-lg'
                   : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
                   }`}>
@@ -418,7 +423,7 @@ const Projects: React.FC = () => {
                   type="button"
                   key={tech}
                   onClick={() => handleTechFilter(tech)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105 ${selectedTech === tech
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105 ${selectedTechs.includes(tech)
                     ? 'bg-blue-600 dark:bg-cyan-600 text-white shadow-lg'
                     : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
                     }`}>
@@ -519,18 +524,21 @@ const Projects: React.FC = () => {
 
 
         {/* Animated Project Grid */}
-        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
-          {displayedProjects.map((project, index) => (
+        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>{displayedProjects.map((project, index) => (
             <Suspense key={`${project.id}-${activeTab}`} fallback={<div className="animate-pulse bg-gray-300 dark:bg-gray-700 h-64 rounded-lg"></div>}>
-              <ProjectCard
-                project={project as PersonalProject | Project}
-                index={index}
-              />
+              <div onClick={() => handleProjectClick(project)} className="cursor-pointer">
+                <ProjectCard
+                  project={project as PersonalProject | Project}
+                  index={index}
+                />
+              </div>
             </Suspense>
           ))}
         </div>
+        <ProjectDetailsModal project={selectedProject} onClose={handleCloseModal} />
+      </div>
 
-        {/* Load More Button and Empty State */}
+      {/* Load More Button and Empty State */}
         <div className="text-center mt-12">
           {hasMoreProjects ? (
             <button
@@ -573,7 +581,6 @@ const Projects: React.FC = () => {
           </div>
         )}
       </div>
-    </div>
   );
 };
 

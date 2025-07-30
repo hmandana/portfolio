@@ -101,7 +101,7 @@ const Home: React.FC = () => {
     }, 100);
 
     return () => clearInterval(typeInterval);
-  }, [currentRoleIndex]);
+  }, [currentRoleIndex, roles]);
 
   // Mouse tracking for interactive effects
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
@@ -206,7 +206,7 @@ const Home: React.FC = () => {
           </div>
           <div className="text-center group cursor-pointer transform hover:scale-105 transition-all duration-300">
             <div className="text-3xl font-bold text-blue-600 dark:text-cyan-400 group-hover:animate-pulse">
-              100+
+              12+
             </div>
             <div className="text-gray-600 dark:text-gray-400 mt-1">Projects Delivered</div>
           </div>
