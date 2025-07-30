@@ -1,8 +1,8 @@
 # 🧑‍💻 Personal Portfolio Website
 
-A high-performance, mobile-first portfolio website developed with **React**, **TypeScript**, **Tailwind CSS** and **Vite**. Designed to showcase professional experience, projects, and technical capabilities with an intuitive user experience and dark mode support.
+A high-performance,  responsive portfolio website developed with **React**, **TypeScript**, **Tailwind CSS** and **Vite**. Designed to showcase professional experience, projects, and technical capabilities with an intuitive user experience and dark mode support.
 
-![Website Screenshot](src/assets/portfolio.png)
+![Website Screenshot](src/assets/portfolio.gif)
 ---
 
 ## 🚀 Tech Stack
@@ -16,29 +16,7 @@ A high-performance, mobile-first portfolio website developed with **React**, **T
 | **Linting**         | ESLint with TypeScript rules                  |
 | **PostCSS**         | PostCSS with Autoprefixer                     |
 
----
 
-## 📁 Folder Structure
-
-```
-src/
-├── assets/                   # Static files (images, icons)
-├── components/
-│   └── Layout/
-│       ├── Layout.tsx        # Page wrapper with layout
-│       ├── Navbar.tsx        # Top navigation bar
-│       └── Footer.tsx        # Footer with social/contact links
-├── hooks/
-│   └── useTheme.tsx          # Custom dark/light mode hook
-├── pages/
-│   ├── Home.tsx              # Landing/intro page
-│   ├── About.tsx             # Bio and professional summary
-│   ├── Projects.tsx          # Featured project gallery
-│   └── Contact.tsx           # Contact form or social links
-├── App.tsx                   # Route setup and layout composition
-├── main.tsx                  # App entry point
-└── index.css                 # Global styles (Tailwind base)
-```
 
 ---
 
@@ -87,32 +65,6 @@ npm run lint
 
 ---
 
-## 🛠️ Customization
-
-### 🖌️ Styling
-
-- Tailwind config: `tailwind.config.js`  
-- Global CSS: `src/index.css`  
-- Utility classes used in components for styling
-
-### 🌙 Theme (Dark/Light)
-
-- Managed via `useTheme` custom hook  
-- Supports system-based and manual toggling  
-- Example usage:
-
-```tsx
-const { theme, toggleTheme } = useTheme();
-```
-
-### 📄 Content
-
-- Edit page content in `src/pages/`
-- Add new sections by creating a page and adding routes in `App.tsx`
-- Modify navigation via `components/Layout/Navbar.tsx`
-
----
-
 ## 📜 NPM Scripts
 
 | Command           | Description                           |
@@ -121,6 +73,8 @@ const { theme, toggleTheme } = useTheme();
 | `npm run build`   | Build optimized production bundle     |
 | `npm run preview` | Preview production locally            |
 | `npm run lint`    | Run static code analysis (ESLint)     |
+| `npm run deploy`  | Deploy to GitHub Pages                |
+
 
 ---
 
@@ -147,14 +101,6 @@ npm run deploy
 3. Set Source to "GitHub Actions"
 4. The workflow will handle the rest automatically
 
-### Alternative Deployment Options
-
-- **[Vercel](https://vercel.com)** – Zero-config deployment for React apps  
-- **[Netlify](https://netlify.com)** – CI/CD with Git integration  
-
-> **Note**: The project is pre-configured with the correct base path for GitHub Pages deployment.
-
----
 
 ## 🙌 Acknowledgments
 
@@ -165,10 +111,9 @@ npm run deploy
 
 ---
 
-## 📫 Contact
+## Connect with Me 🤝
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/haritham/)
 
-**Name**: Your Full Name  
-**Email**: your.email@example.com  
-**LinkedIn**: [linkedin.com/in/yourprofile](https://linkedin.com/in/yourprofile)
 
----
+
+

@@ -3,12 +3,14 @@ import ProjectDetailsModal from '../components/ProjectDetailsModal';
 import '../styles/projects-animations.css';
 
 // Enhanced type definitions
-interface Project {
+export interface Project {
   id: number;
   title: string;
   description: string;
   technologies: string[];
   Company?: string;
+  demoLink?: string;
+  githubLink?: string;
 }
 
 interface PersonalProject extends Project {

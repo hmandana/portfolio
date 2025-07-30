@@ -65,18 +65,18 @@ const homeData = {
  *
  * @returns {JSX.Element} The Home component.
  */
+const roles = [
+  'Full-Stack Engineer',
+  'React Developer',
+  'AWS Cloud Expert',
+  'UI/UX Enthusiast',
+  'DevOps Engineer'
+];
+
 const Home: React.FC = () => {
   const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
   const [isTyping, setIsTyping] = useState(true);
   const [displayedText, setDisplayedText] = useState('');
-
-  const roles = [
-    'Full-Stack Engineer',
-    'React Developer',
-    'AWS Cloud Expert',
-    'UI/UX Enthusiast',
-    'DevOps Engineer'
-  ];
 
   // Typewriter effect for roles
   useEffect(() => {
@@ -101,7 +101,7 @@ const Home: React.FC = () => {
     }, 100);
 
     return () => clearInterval(typeInterval);
-  }, [currentRoleIndex, roles]);
+  }, [currentRoleIndex]);
 
   // Mouse tracking for interactive effects
   const handleMouseMove = useCallback((e: React.MouseEvent) => {

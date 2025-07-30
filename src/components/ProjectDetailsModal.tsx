@@ -1,9 +1,14 @@
 import React from 'react';
 import type { Project } from '../pages/Projects';
+// If default, could use: import Project from '../pages/Projects';
 
 interface ProjectDetailsModalProps {
   project: Project | null;
   onClose: () => void;
+}
+
+function isPersonalProject(project: Project | { demoLink?: string; githubLink?: string }): project is Project & { demoLink: string; githubLink: string } {
+  return typeof project.demoLink === 'string' && typeof project.githubLink === 'string';
 }
 
 const ProjectDetailsModal: React.FC<ProjectDetailsModalProps> = ({ project, onClose }) => {
@@ -24,27 +29,23 @@ const ProjectDetailsModal: React.FC<ProjectDetailsModalProps> = ({ project, onCl
         <div className="mb-3">
           <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Technologies Used:</h3>
           <div className="flex flex-wrap gap-2 mb-2">
-            {project.technologies.map((tech, i) => (
+            {project.technologies.map((tech: string, i: number) => (
               <span key={i} className="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700 dark:bg-cyan-900 dark:text-cyan-200">
                 {tech}
               </span>
             ))}
           </div>
         </div>
-        {'demoLink' in project || 'githubLink' in project ? (
+        {isPersonalProject(project) && (
           <div className="flex gap-4 mt-4">
-            {'demoLink' in project && project.demoLink && (
-              <a href={project.demoLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-semibold">
-                Live Demo
-              </a>
-            )}
-            {'githubLink' in project && project.githubLink && (
-              <a href={project.githubLink} target="_blank" rel="noopener noreferrer" className="text-gray-700 dark:text-gray-200 hover:underline font-semibold">
-                View Code
-              </a>
-            )}
+            <a href={project.demoLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-semibold">
+              Live Demo
+            </a>
+            <a href={project.githubLink} target="_blank" rel="noopener noreferrer" className="text-gray-700 dark:text-gray-200 hover:underline font-semibold">
+              View Code
+            </a>
           </div>
-        ) : null}
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './App.css'
-import { ThemeProvider } from './hooks/useTheme'
+import { ThemeProvider } from './hooks/ThemeProvider';
 
 // Layout
 import Layout from './components/Layout/Layout'
