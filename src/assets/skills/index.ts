@@ -32,7 +32,6 @@ import dockerImg from './docker.png';
 import kubernetesImg from './kubernetes.png';
 import awsImg from './aws.png';
 import jenkinsImg from './jenkins.png';
-import portfolioImg from '../portfolio.png';
 
 export const skillImages = {
   javascript: javascriptImg,
@@ -69,8 +68,4 @@ export const skillImages = {
   aws: awsImg,
   jenkins: jenkinsImg,
 };
-
-export const projectImages = {
-  portfolio: portfolioImg,
-}
 
