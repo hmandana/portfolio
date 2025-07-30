@@ -87,7 +87,7 @@ This project is configured for automatic deployment to GitHub Pages using GitHub
 #### Automatic Deployment
 1. Push changes to the `main` branch
 2. GitHub Actions will automatically build and deploy the site
-3. Visit your site at: `https://hmandana.github.io/portfolio-next-react`
+3. Visit your site at: `https://hmandana.github.io/portfolio`
 
 #### Manual Deployment
 ```bash

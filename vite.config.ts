@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig(({ command }) => ({
   plugins: [react()],
-  base: command === 'build' ? '/portfolio-next-react/' : '/',
+  base: command === 'build' ? '/portfolio/' : '/',
   server: {
     port: 3000,
     host: true, // Allow access from other devices on the network

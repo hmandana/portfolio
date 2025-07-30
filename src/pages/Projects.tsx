@@ -153,8 +153,8 @@ const selfProjectsData: SelfProjectsData = [
     title: 'My Portfolio',
     description: 'A portfolio website to showcase my projects and skills',
     technologies: ['React', 'Node.js', 'Next.js', 'Vite', 'Tailwind CSS', 'TypeScript', 'Github Pages', 'Github Actions'],
-    demoLink: 'https://hmandana.github.io/portfolio-next-react/',
-    githubLink: 'https://github.com/hmandana/portfolio-next-react',
+    demoLink: 'https://hmandana.github.io/portfolio/',
+    githubLink: 'https://github.com/hmandana/portfolio',
   },
 ];
 

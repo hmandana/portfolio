@@ -11,7 +11,7 @@ import About from './pages/About'
 import Projects from './pages/Projects'
 
 // Get base path for GitHub Pages
-const basename = import.meta.env.PROD ? '/portfolio-next-react' : ''
+const basename = import.meta.env.PROD ? '/portfolio' : ''
 
 function App() {
   return (

@@ -20,7 +20,7 @@ This document explains how to deploy your portfolio website to GitHub Pages.
    - The workflow will automatically run and deploy your site
 
 3. **Access your site**
-   - Your site will be available at: `https://hmandana.github.io/portfolio-next-react`
+   - Your site will be available at: `https://hmandana.github.io/portfolio`
    - Initial deployment may take a few minutes
 
 ### Option 2: Manual Deployment
@@ -44,7 +44,7 @@ npm run deploy
 
 ### Key Configuration:
 
-- **Base Path**: `/portfolio-next-react/` for production
+- **Base Path**: `/portfolio/` for production
 - **Build Output**: `dist/` directory
 - **Client-side Routing**: Supported via 404.html redirect
 - **Auto Deployment**: Triggers on push to main branch
