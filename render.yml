@@ -18,10 +18,11 @@ services:
         sync: false # This will need to be set manually in Render dashboard
     healthCheckPath: /graphql
 
-  - type: static
+  - type: web
     name: portfolio-ui
-    staticPublishPath: dist
+    env: static
     buildCommand: npm install && npm run build
+    staticPublishPath: dist
     envVars:
       - key: VITE_GRAPHQL_ENDPOINT
         fromService:

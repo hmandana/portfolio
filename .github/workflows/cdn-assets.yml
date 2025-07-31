@@ -10,7 +10,7 @@ on:
       purge_cache:
         description: 'Purge CDN cache'
         required: false
-        default: 'false'
+        default: false
         type: boolean
 
 jobs:
