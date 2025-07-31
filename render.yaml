@@ -28,7 +28,7 @@ services:
         fromService:
           type: web
           name: portfolio-graphql-server
-          property: url
+          property: host
 
 databases:
   - name: portfolio-mongodb
