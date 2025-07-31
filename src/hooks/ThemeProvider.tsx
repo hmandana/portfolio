@@ -62,15 +62,22 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [isDarkMode]);
 
-  // Listen for system theme changes
+  // Only listen for system theme changes if no saved preference exists
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = (e: MediaQueryListEvent) => {
-      setIsDarkMode(e.matches);
-    };
-    
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    try {
+      const savedTheme = localStorage.getItem('theme');
+      if (!savedTheme) {
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        const handleChange = (e: MediaQueryListEvent) => {
+          setIsDarkMode(e.matches);
+        };
+        
+        mediaQuery.addEventListener('change', handleChange);
+        return () => mediaQuery.removeEventListener('change', handleChange);
+      }
+    } catch (error) {
+      console.warn('Unable to set up system theme listener:', error);
+    }
   }, []);
 
   const toggleTheme = useCallback(() => {

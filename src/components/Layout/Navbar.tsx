@@ -47,6 +47,12 @@ const Navbar: React.FC = () => {
               >
                 Projects
               </Link>
+              <Link 
+                to="/contact" 
+                className={`px-3 py-2 rounded-md text-sm font-medium hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors duration-300 ${isActive('/contact')}`}
+              >
+                Contact
+              </Link>
             </div>
           </div>
         </div>

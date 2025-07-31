@@ -1,4 +1,4 @@
-import { Project, Profile, HomeData } from '../models/index.js';
+import { Project, Profile, HomeData, ContactMessage } from '../models/index.js';
 
 const resolvers = {
   Query: {
@@ -54,6 +54,31 @@ const resolvers = {
         return homeData;
       } catch (error) {
         throw new Error(`Failed to fetch home data: ${error.message}`);
+      }
+    },
+
+    // Contact message resolvers
+    contactMessages: async () => {
+      try {
+        return await ContactMessage.find().sort({ createdAt: -1 });
+      } catch (error) {
+        throw new Error(`Failed to fetch contact messages: ${error.message}`);
+      }
+    },
+
+    contactMessage: async (_, { id }) => {
+      try {
+        return await ContactMessage.findById(id);
+      } catch (error) {
+        throw new Error(`Failed to fetch contact message: ${error.message}`);
+      }
+    },
+
+    unreadContactMessages: async () => {
+      try {
+        return await ContactMessage.find({ isRead: false }).sort({ createdAt: -1 });
+      } catch (error) {
+        throw new Error(`Failed to fetch unread contact messages: ${error.message}`);
       }
     },
 
@@ -124,6 +149,57 @@ const resolvers = {
         }
       } catch (error) {
         throw new Error(`Failed to update profile: ${error.message}`);
+      }
+    },
+
+    sendContactMessage: async (_, { input }) => {
+      try {
+        // Save message to database
+        const contactMessage = new ContactMessage(input);
+        await contactMessage.save();
+        
+        console.log('Contact message saved to database:', {
+          name: input.name,
+          email: input.email,
+          phone: input.phone || 'Not provided',
+          message: input.message,
+          timestamp: new Date().toISOString()
+        });
+
+        return { 
+          success: true, 
+          message: 'Message sent successfully! We will get back to you soon.' 
+        };
+      } catch (error) {
+        console.error('Error saving contact message:', error);
+        return { 
+          success: false, 
+          message: 'Failed to send message. Please try again later.' 
+        };
+      }
+    },
+
+    markMessageAsRead: async (_, { id }) => {
+      try {
+        return await ContactMessage.findByIdAndUpdate(
+          id,
+          { 
+            isRead: true, 
+            readAt: new Date() 
+          },
+          { new: true }
+        );
+      } catch (error) {
+        throw new Error(`Failed to mark message as read: ${error.message}`);
+      }
+    },
+
+    deleteContactMessage: async (_, { id }) => {
+      try {
+        const result = await ContactMessage.findByIdAndDelete(id);
+        return !!result;
+      } catch (error) {
+        throw new Error(`Failed to delete contact message: ${error.message}`);
       }
     }
   }

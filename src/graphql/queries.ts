@@ -81,11 +81,6 @@ export const GET_PROFILE = gql`
         details
       }
       interests
-      contact {
-        type
-        value
-        icon
-      }
     }
   }
 `;
@@ -160,6 +155,15 @@ export const UPDATE_PROFILE = gql`
       name
       summary
       interests
+    }
+  }
+`;
+
+export const SEND_CONTACT_MESSAGE = gql`
+  mutation SendContactMessage($input: ContactMessageInput!) {
+    sendContactMessage(input: $input) {
+      success
+      message
     }
   }
 `;

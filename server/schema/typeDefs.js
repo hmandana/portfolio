@@ -45,12 +45,6 @@ const typeDefs = gql`
     details: String
   }
 
-  type Contact {
-    type: String!
-    value: String!
-    icon: String
-  }
-
   type Profile {
     name: String!
     summary: [String!]!
@@ -59,7 +53,6 @@ const typeDefs = gql`
     education: [Education!]!
     certifications: [Certification!]!
     interests: [String!]!
-    contact: [Contact!]!
   }
 
   type Stats {
@@ -75,6 +68,18 @@ const typeDefs = gql`
     stats: Stats!
   }
 
+  type ContactMessage {
+    id: ID!
+    name: String!
+    email: String!
+    phone: String
+    message: String!
+    isRead: Boolean!
+    readAt: String
+    createdAt: String!
+    updatedAt: String!
+  }
+
   type Query {
     # Project queries
     projects: [Project!]!
@@ -86,6 +91,11 @@ const typeDefs = gql`
     
     # Home page queries
     homeData: HomeData
+    
+    # Contact queries
+    contactMessages: [ContactMessage!]!
+    contactMessage(id: ID!): ContactMessage
+    unreadContactMessages: [ContactMessage!]!
     
     # Utility queries
     allTechnologies: [String!]!
@@ -107,6 +117,18 @@ const typeDefs = gql`
     interests: [String!]!
   }
 
+  input ContactMessageInput {
+    name: String!
+    email: String!
+    phone: String
+    message: String!
+  }
+
+  type ContactMessageResponse {
+    success: Boolean!
+    message: String!
+  }
+
   type Mutation {
     # Project mutations
     createProject(input: ProjectInput!): Project!
@@ -115,6 +137,11 @@ const typeDefs = gql`
     
     # Profile mutations
     updateProfile(input: ProfileInput!): Profile
+    
+    # Contact mutations
+    sendContactMessage(input: ContactMessageInput!): ContactMessageResponse!
+    markMessageAsRead(id: ID!): ContactMessage
+    deleteContactMessage(id: ID!): Boolean!
   }
 `;
 

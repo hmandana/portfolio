@@ -90,39 +90,12 @@ workExperience: [
     "Meditation",
     "Hiking",
     "Cooking"
-  ],
-  contact: [
-    {
-      icon: (
-        <svg className="w-6 h-6 mr-2 text-blue-600 dark:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-      ),
-      value: "haritham491@gmail.com"
-    },
-    {
-      icon: (
-        <svg className="w-6 h-6 mr-2 text-blue-600 dark:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-        </svg>
-      ),
-      value: "(214) 799-1839"
-    },
-    {
-      icon: (
-        <svg className="w-6 h-6 mr-2 text-blue-600 dark:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-      ),
-      value: "Dallas, TX"
-    }
   ]
 };
 
 /**
  * The About component renders the About page, which displays information about the author,
- * including work experience, education, certifications, interests, and contact information.
+ * including work experience, education, certifications, and interests.
  * It also includes a progress indicator that shows how much of the page has been scrolled.
  * The component uses Intersection Observers to track which sections are in view and
  * conditionally render the sections and their corresponding navigation items.
@@ -138,7 +111,7 @@ const About: React.FC = () => {
   // Intersection Observer for section visibility
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
-    const sections = ['about', 'work-experience', 'education', 'certifications', 'interests', 'contact'];
+    const sections = ['about', 'work-experience', 'education', 'certifications', 'interests'];
 
     sections.forEach((section) => {
       const observer = new IntersectionObserver(
@@ -212,8 +185,7 @@ const About: React.FC = () => {
             { id: 'work-experience', label: 'Experience', icon: '💼' },
             { id: 'education', label: 'Education', icon: '🎓' },
             { id: 'certifications', label: 'Certifications', icon: '🏆' },
-            { id: 'interests', label: 'Interests', icon: '❤️' },
-            { id: 'contact', label: 'Contact', icon: '📞' }
+            { id: 'interests', label: 'Interests', icon: '❤️' }
           ].map((item) => (
             <li key={item.id}>
               <button
@@ -240,15 +212,14 @@ const About: React.FC = () => {
           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
             <div 
               className="bg-blue-600 dark:bg-cyan-600 h-2 rounded-full transition-all duration-500"
-              style={{ width: `${(visibleSections.size / 6) * 100}%` }}
+              style={{ width: `${(visibleSections.size / 5) * 100}%` }}
             />
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            {visibleSections.size} of 6 sections viewed
+            {visibleSections.size} of 5 sections viewed
           </p>
         </div>
       </nav>
-
       {/* Main Content */}
       <div className="w-full md:w-3/4 p-6">
         <section id="about" className="mb-12" ref={el => { sectionRefs.current['about'] = el; }}>
@@ -373,17 +344,6 @@ const About: React.FC = () => {
           </div>
         </section>
 
-        <section id="contact" className="mb-12" ref={el => { sectionRefs.current['contact'] = el; }}>
-          <h2 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">Contact Me</h2>
-          <div className="flex flex-col md:flex-row justify-between gap-6">
-            {aboutData.contact.map((item, idx) => (
-              <div key={idx} className="flex items-center">
-                {item.icon}
-                <span className="text-gray-700 dark:text-gray-300">{item.value}</span>
-              </div>
-            ))}
-          </div>
-        </section>
       </div>
     </div>
   );

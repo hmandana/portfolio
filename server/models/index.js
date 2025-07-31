@@ -38,12 +38,7 @@ const profileSchema = new mongoose.Schema({
     year: { type: String, required: true },
     details: { type: String }
   }],
-  interests: [{ type: String }],
-  contact: [{
-    type: { type: String, required: true },
-    value: { type: String, required: true },
-    icon: { type: String }
-  }]
+  interests: [{ type: String }]
 }, { timestamps: true });
 
 // Home Page Data Schema
@@ -58,6 +53,17 @@ const homeDataSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
+// Contact Message Schema
+const contactMessageSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  phone: { type: String },
+  message: { type: String, required: true },
+  isRead: { type: Boolean, default: false },
+  readAt: { type: Date }
+}, { timestamps: true });
+
 export const Project = mongoose.model('Project', projectSchema);
 export const Profile = mongoose.model('Profile', profileSchema);
 export const HomeData = mongoose.model('HomeData', homeDataSchema);
+export const ContactMessage = mongoose.model('ContactMessage', contactMessageSchema);
