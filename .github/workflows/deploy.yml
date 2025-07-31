@@ -101,6 +101,14 @@ jobs:
           exit 1
         fi
         
+        # Validate database operations utility exists
+        if [ -f "server/utils/db-operations.js" ]; then
+          echo "✅ Database operations utility found"
+        else
+          echo "❌ Database operations utility missing"
+          exit 1
+        fi
+        
     - name: Lint code
       run: |
         echo "🔍 Running linter..."

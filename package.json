@@ -18,13 +18,11 @@
     "deploy": "gh-pages -d dist",
     "server": "node server/server.js",
     "server:dev": "nodemon server/server.js",
-    "seed": "node server/seed.js",
     "full-dev": "concurrently \"npm run server\" \"npm run dev\"",
-    "data:list": "node server/scripts/manageData.js list",
-    "data:backup": "node server/scripts/manageData.js backup",
-    "data:validate": "node server/scripts/manageData.js validate",
-    "data:export": "node server/scripts/manageData.js export",
-    "data:help": "node server/scripts/manageData.js help"
+    "test:connection": "npx tsx test-connection.ts",
+    "db:status": "node server/utils/db-operations.js status",
+    "db:init": "node server/utils/db-operations.js init",
+    "db:clear": "node server/utils/db-operations.js clear"
   },
   "dependencies": {
     "@apollo/client": "^3.13.9",
@@ -56,6 +54,7 @@
     "nodemon": "^3.1.10",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.0",
+    "tsx": "^4.20.3",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.30.1",
     "vite": "^6.3.5"

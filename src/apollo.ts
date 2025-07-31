@@ -28,8 +28,8 @@ const client = new ApolloClient({
       Query: {
         fields: {
           projects: {
-            // Enable caching for projects query
-            merge(existing = [], incoming) {
+            // Enable caching for projects query - always use incoming data
+            merge(_, incoming) {
               return incoming;
             },
           },
