@@ -1,10 +1,11 @@
-name: Deploy Portfolio to GitHub Pages
+name: Deploy Portfolio to Render
 
 on:
   push:
     branches: [ main ]
     paths:
       - 'src/**'
+      - 'server/**'
       - 'public/**'
       - 'cdn-assets/**'
       - 'package*.json'
@@ -15,147 +16,60 @@ on:
     branches: [ main ]
     paths:
       - 'src/**'
+      - 'server/**'
       - 'public/**'
       - 'cdn-assets/**'
       - 'package*.json'
       - 'vite.config.ts'
       - 'tsconfig.json'
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
-  pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
-  group: "pages"
+  group: "portfolio"
   cancel-in-progress: false
 
 jobs:
-  # Validate CDN assets and dependencies
   validate:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-      
-    - name: Validate CDN Assets
+
+    - name: Validate Code
       run: |
-        echo "📋 Validating CDN assets..."
-        if [ -d "cdn-assets/skills" ]; then
-          echo "✅ CDN assets directory exists"
-          echo "📊 Found $(find cdn-assets/skills -type f | wc -l) skill images"
-          ls -la cdn-assets/skills/ | head -10
-        else
-          echo "⚠️ CDN assets directory not found"
-        fi
-        
-    - name: Validate Environment Files
-      run: |
-        echo "📋 Validating environment configuration..."
-        if [ -f "src/config/cdn.ts" ]; then
-          echo "✅ CDN configuration exists"
-        else
-          echo "❌ CDN configuration missing"
-          exit 1
-        fi
+        npm install
+        npm run lint
 
   build:
     runs-on: ubuntu-latest
     needs: validate
-    
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-      
+
     - name: Setup Node
       uses: actions/setup-node@v4
       with:
         node-version: '18'
-        cache: 'npm'
-        
+
     - name: Cache node modules
       uses: actions/cache@v4
       with:
         path: ~/.npm
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
-          
+
     - name: Install dependencies
-      run: |
-        echo "📦 Installing dependencies..."
-        npm ci
-        echo "✅ Dependencies installed successfully"
-        
-    - name: Validate GraphQL Schema
-      run: |
-        echo "🔍 Validating GraphQL queries..."
-        # Check if GraphQL files exist and are valid
-        if [ -f "src/graphql/queries.ts" ]; then
-          echo "✅ GraphQL queries found"
-        else
-          echo "❌ GraphQL queries missing"
-          exit 1
-        fi
-        
-        # Validate database operations utility exists
-        if [ -f "server/utils/db-operations.js" ]; then
-          echo "✅ Database operations utility found"
-        else
-          echo "❌ Database operations utility missing"
-          exit 1
-        fi
-        
-    - name: Lint code
-      run: |
-        echo "🔍 Running linter..."
-        npm run lint
-        echo "✅ Linting completed successfully"
-      
-    - name: Type check
-      run: |
-        echo "🔍 Running TypeScript type check..."
-        npx tsc --noEmit
-        echo "✅ Type checking completed successfully"
-        
+      run: npm ci
+
     - name: Build application
+      run: npm run build:prod
+    
+    - name: Deploy to Render
       run: |
-        echo "🏗️ Building application..."
-        npm run build
-        echo "✅ Build completed successfully"
-      env:
-        NODE_ENV: production
-        VITE_GRAPHQL_ENDPOINT: ${{ secrets.VITE_GRAPHQL_ENDPOINT || 'http://localhost:4000/graphql' }}
-        
-    - name: Verify build output
-      run: |
-        echo "📋 Verifying build output..."
-        if [ -d "dist" ]; then
-          echo "✅ Dist directory created"
-          echo "📊 Build size: $(du -sh dist | cut -f1)"
-          echo "📁 Build contents:"
-          find dist -type f -name "*.js" -o -name "*.css" -o -name "*.html" | head -10
-        else
-          echo "❌ Build failed - dist directory not found"
-          exit 1
-        fi
-        
-    - name: Test CDN URLs (Production)
-      if: github.ref == 'refs/heads/main'
-      run: |
-        echo "🌐 Testing CDN accessibility..."
-        # Test if jsDelivr CDN is accessible
-        if curl -f -s "https://cdn.jsdelivr.net/gh/${{ github.repository }}@main/cdn-assets/skills/javascript.png" > /dev/null; then
-          echo "✅ jsDelivr CDN is accessible"
-        else
-          echo "⚠️ jsDelivr CDN not yet available (this is normal for first deployment)"
-        fi
-        
-    - name: Setup Pages
-      uses: actions/configure-pages@v4
+        npm run deploy:render
       
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3

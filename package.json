@@ -22,7 +22,13 @@
     "test:connection": "npx tsx test-connection.ts",
     "db:status": "node server/utils/db-operations.js status",
     "db:init": "node server/utils/db-operations.js init",
-    "db:clear": "node server/utils/db-operations.js clear"
+    "db:clear": "node server/utils/db-operations.js clear",
+    "env:list": "node scripts/setup-env.js list",
+    "env:validate": "node scripts/setup-env.js validate",
+    "env:create:dev": "node scripts/setup-env.js create development",
+    "env:create:prod": "node scripts/setup-env.js create production",
+    "build:prod": "NODE_ENV=production npm run build",
+    "deploy:render": "npm run env:validate && npm run build:prod"
   },
   "dependencies": {
     "@apollo/client": "^3.13.9",

@@ -17,7 +17,8 @@ if (!MONGODB_URI) {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  introspection: true, 
+  introspection: true,
+  csrfPrevention: false, // Required for standalone server with CORS
   formatError: (err) => {
     console.error('GraphQL Error:', { 
       message: err.message, 
@@ -42,8 +43,12 @@ const startServer = async () => {
   try {
     await connectDB();
     
+    const port = process.env.PORT || 4000;
     const { url } = await startStandaloneServer(server, {
-      listen: { port: process.env.PORT || 4000 },
+      listen: { 
+        port: port,
+        host: process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost'
+      },
       context: async ({ req }) => {
         // You can add context for auth, etc. here
         return {}; 
