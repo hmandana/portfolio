@@ -1,4 +1,6 @@
 import React, { useState, useMemo, useCallback, useEffect, useRef, lazy, Suspense } from 'react';
+import { useQuery } from '@apollo/client';
+import { GET_PROJECTS } from '../graphql/queries';
 import ProjectDetailsModal from '../components/ProjectDetailsModal';
 import '../styles/projects-animations.css';
 
@@ -11,6 +13,7 @@ export interface Project {
   Company?: string;
   demoLink?: string;
   githubLink?: string;
+  type: 'professional' | 'personal';
 }
 
 interface PersonalProject extends Project {
@@ -18,145 +21,6 @@ interface PersonalProject extends Project {
   githubLink: string;
 }
 
-type SelfProjectsData = PersonalProject[];
-const projectsData = [
-  {
-    id: 1,
-    title: 'EG Console',
-    Company: 'Expedia Group',
-    description: 'The Expedia Group Console is a unified platform that transform the travel ecosystem into a composable, developer-first, and partner-driven platform, enabling any company—from startups to global enterprises—to build, enhance, and scale travel experiences using Expedia’s infrastructure, data, and services.',
-    technologies: ['ReactJS', 'TypeScript', 'Kotlin JAVA', 'Apollo GraphQL', 'Qiankun', 'HapiJS', 'Cypress', 'Playwright', 'React testing library', 'NX/yarn monorepo workspace', 'Catchpoint', 'Datadog', 'Python', 'Github Actions', 'Docker', 'Kubernetes', 'AWS', 'Spinnaker', 'Jenkins', 'Figma', 'Miro'],
-  },
-  {
-    id: 2,
-    title: 'Lodging Connectivity',
-    Company: 'Expedia Group',
-    description: 'Lodging Connectivity enables seamless integration between lodging partners and Expedia’s OpenWorld platform, providing real-time synchronization of rates, availability, reservations, and content via APIs. It supports onboarding, monitoring, and analytics through the Connectivity Hub, driving operational efficiency, data accuracy, and scalable, personalized travel experiences across global distribution channels.',
-    technologies: ['React', 'TypeScript', 'Apollo GraphQL', 'Playwright', 'Datadog', 'Github Actions', 'Docker', 'Kubernetes', 'AWS', 'Spinnaker', 'Figma', 'Miro'],
-  },
-  {
-    id: 3,
-    title: 'Unified Login',
-    Company: 'Expedia Group',
-    description: 'Unified Login provides a centralized, secure authentication experience across all Expedia Group brands and partner platforms. It leverages OAuth2/OIDC standards to streamline user access, enable single sign-on (SSO), and support multi-tenant identity federation. Unified Login improves security, simplifies user management, and enables consistent, cross-brand personalization and session continuity.',
-    technologies: ['React', 'TypeScript', 'JAVA', 'Spring Boot', 'Kotlin JAVA', 'Apollo GraphQL', 'OAuth2', 'JWT', 'Playwright', 'Datadog', 'Github Actions', 'Docker', 'Kubernetes', 'AWS', 'Spinnaker', 'Figma', 'Miro'],
-  },
-  {
-    id: 4,
-    title: 'CIB Identity Services',
-    Company: 'JP Morgan Chase',
-    description: 'A unified solution for authentication into multiple JP Morgan portals with modernized user experience using latest tools and technologies',
-    technologies: ['ReactJS', 'TypeScript', 'Spring boot', 'JAVA', 'Redux', 'Cypress.IO', 'React testing library', 'IAM', 'JWT', 'AWS', 'Transmit Security', 'Material UI', 'Linux', 'Jenkins', 'WCAG', 'JAWS', 'NVDA', 'Black Duck', 'SonarQube'],
-  },
-  {
-    id: 5,
-    title: 'Trading Operations',
-    Company: 'JP Morgan Chase',
-    description: 'A content management system with Markdown support, categories, and user authentication.',
-    technologies: ['ReactJS', 'TypeScript', 'JAVA', 'Spring boot', 'ContextAPI', 'Ag-Grid', 'React testing library', 'AWS', 'Material UI', 'Jenkins', 'Black Duck', 'SonarQube', 'Grafana'],
-  },
-  {
-    id: 6,
-    title: 'Government Shutdown Loan',
-    Company: 'USAA',
-    description: 'Consumer lending Origination Experience (CLOE) is a leading-edge dual facing (Member and Internal) automated web application for secure and insecure loans',
-    technologies: [
-      "React",
-      "Node.js",
-      "Redux",
-      "Sass",
-      "JAVA",
-      "JAWS",
-      "Jenkins",
-      "CSS",
-      "ES6",
-      "Bootstrap CSS",
-      "Puppeteer",
-      "Babel",
-      "Webpack 4",
-      "Jest",
-      "Cucumber",
-      "Selenium",
-      "WCAG"
-    ]
-    ,
-  },
-  {
-    id: 7,
-    title: 'Consumer Portal',
-    Company: 'West Interactive Services',
-    description: 'The West Customer portal is a leading provider of cloud-based customer experience and communication solutions, strategically attract, engage, and serve customers on their own terms and consultatively integrating technology to improve interaction, enhance productivity, increase profitability and exceed customer expectations, with clients in healthcare, education, utilities and diverse commercial industries.',
-    technologies: [
-      "React",
-      "Node.js",
-      "Hapi.js",
-      "Jasmine karma",
-      "Jest",
-      "Redux",
-      "ES6",
-      "Less",
-      "Jenkins",
-      "Bootstrap CSS",
-      "Webpack 2/3",
-      "PCF - Pivotal cloud foundry"
-    ]
-    ,
-  },
-  {
-    id: 8,
-    title: 'WISDOM',
-    Company: 'West Interactive Services',
-    description: 'The WISDOM is to create the preface IVR call flows with test case initialization. Test numbers are configured to land on these special apps, prompt the caller for test scenario data, then launch the application within the already established phone call.  This can taint the IVR session and mask potential application issues until they reach production',
-    technologies: [
-      "React",
-      "Node.js",
-      "Hapi.js",
-      "Jasmine karma",
-      "Jest",
-      "Redux",
-      "ES6",
-      "Less",
-      "Jenkins",
-      "Bootstrap CSS",
-      "Webpack 2/3",
-      "PCF - Pivotal cloud foundry"
-    ]
-    ,
-  },
-  {
-    id: 9,
-    title: 'Image Asset Search Engine',
-    Company: 'Target Corporation',
-    description: 'The project is to create one stop for teams to retrieve assets that exist across Target that have been created by various teams and channels and stored within different systems.',
-    technologies: ['Handlebars', 'Ember JS', 'Node JS', 'Bootstrap CSS', 'Ember Qunit', 'Go Lang', 'drone', 'OpenStack CLI', 'MongoDB', 'Heat', 'Terraform', 'Ansible', 'YAML', 'Shell', 'Python', 'Adobe InDesign'],
-  },
-  {
-    id: 10,
-    title: 'CORAL',
-    Company: 'BestBuy Corporation',
-    description: 'CORAL is a Content Management Platform designed to empower business users by enhancing and supporting the content creation process via a platform that works consistently and efficiently across multiple enterprise teams. The objective is to enable one content object to support multiple entry points into an event (sales and non-sales) in keeping with the concept of COPE (Create Once Publish Everywhere).',
-    technologies: ['JAVA', 'J2EE', 'Spring MVC', 'HTML5', 'JavaScript', 'Bootstrap CSS', 'Angular JS', 'RESTful', 'JSON', 'Jackrabbit API', 'Linux', 'Bamboo', 'Groovy', 'Karma Jasmine', 'GGTS', 'LDAP', 'MongoDB', 'Oracle 11g', 'Tomcat Server', 'JIRA'],
-  },
-  {
-    id: 11,
-    title: 'GENBAND Software Center (GSC)',
-    Company: 'GENBAND',
-    description: 'GENBAND Software Center (GSC) is a web-based application to provide customers with a valid support contract means to find and download software from GENBAND for their hardware that are supplied by the vendors to meet the CTQ specifications',
-    technologies: ['JAVA', 'J2EE', 'XHTML', 'CSS', 'JSF Primefaces', 'JPA', 'Spring MVC', 'EJB', 'Oracle JDBC', 'LDAP', 'Glassfish'],
-  },
-
-];
-
-const selfProjectsData: SelfProjectsData = [
-  {
-    id: 1,
-    title: 'My Portfolio',
-    description: 'A portfolio website to showcase my projects and skills',
-    technologies: ['React', 'Node.js', 'Next.js', 'Vite', 'Tailwind CSS', 'TypeScript', 'Github Pages', 'Github Actions'],
-    demoLink: 'https://hmandana.github.io/portfolio/',
-    githubLink: 'https://github.com/hmandana/portfolio',
-  },
-];
 
 // Dynamically load project card component
 const ProjectCard = lazy(() => import('./components/ProjectCard'));
@@ -218,18 +82,27 @@ const Projects: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const isVisible = useIntersectionObserver(containerRef, { threshold: 0.1 });
+  const observerOptions = useMemo(() => ({ threshold: 0.1 }), []);
+  const isVisible = useIntersectionObserver(containerRef, observerOptions);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const VISIBLE_COUNT = 5;
   const LOAD_MORE_COUNT = 6;
 
-  // Memoized computations for better performance
+  // GraphQL query
+  const { data, loading, error } = useQuery<{ projects: Project[] }>(GET_PROJECTS);
+
+  // Use GraphQL data
+  const allProjects = data?.projects || [];
+  const professionalProjects = allProjects.filter(p => p.type === 'professional');
+  const personalProjects = allProjects.filter(p => p.type === 'personal');
+
+  // Memoized computations for better performance - MUST be before conditional returns
   const allTechnologies = useMemo(() =>
     Array.from(
-      new Set([...projectsData, ...selfProjectsData].flatMap(project => project.technologies))
+      new Set([...professionalProjects, ...personalProjects].flatMap(project => project.technologies))
     ).sort(),
-    []
+    [professionalProjects, personalProjects]
   );
 
   const visibleTech = useMemo(() =>
@@ -239,7 +112,7 @@ const Projects: React.FC = () => {
 
   // Enhanced filtering with search and technology filter
   const filteredProfessionalProjects = useMemo(() => {
-    let filtered = projectsData;
+    let filtered = professionalProjects;
 
     if (selectedTechs.length > 0) {
       filtered = filtered.filter(project => 
@@ -263,10 +136,10 @@ const Projects: React.FC = () => {
     }
 
     return filtered;
-  }, [selectedTechs, debouncedSearchQuery]);
+  }, [selectedTechs, debouncedSearchQuery, professionalProjects]);
 
   const filteredPersonalProjects = useMemo(() => {
-    let filtered = selfProjectsData;
+    let filtered = personalProjects;
 
     if (selectedTechs.length > 0) {
       filtered = filtered.filter(project => 
@@ -288,7 +161,7 @@ const Projects: React.FC = () => {
     }
 
     return filtered;
-  }, [selectedTechs, debouncedSearchQuery]);
+  }, [selectedTechs, debouncedSearchQuery, personalProjects]);
 
   // Optimized handlers with useCallback
   const handleTechFilter = useCallback((tech: string) => {
@@ -306,14 +179,14 @@ const Projects: React.FC = () => {
     }
     setDisplayCount(LOAD_MORE_COUNT);
     setTimeout(() => setIsAnimating(false), 300);
-  }, []);
+  }, [LOAD_MORE_COUNT]);
 
   const handleTabChange = useCallback((tab: 'professional' | 'personal') => {
     setIsAnimating(true);
     setActiveTab(tab);
     setDisplayCount(LOAD_MORE_COUNT);
     setTimeout(() => setIsAnimating(false), 300);
-  }, []);
+  }, [LOAD_MORE_COUNT]);
 
   const handleLoadMore = useCallback(() => {
     setIsLoading(true);
@@ -321,18 +194,18 @@ const Projects: React.FC = () => {
       setDisplayCount(prev => prev + LOAD_MORE_COUNT);
       setIsLoading(false);
     }, 500);
-  }, []);
+  }, [LOAD_MORE_COUNT]);
 
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
     setDisplayCount(LOAD_MORE_COUNT);
-  }, []);
+  }, [LOAD_MORE_COUNT]);
 
   const clearFilters = useCallback(() => {
     setSelectedTechs([]);
     setSearchQuery('');
     setDisplayCount(LOAD_MORE_COUNT);
-  }, []);
+  }, [LOAD_MORE_COUNT]);
 
   // Get current filtered projects and counts
   const currentProjects = activeTab === 'professional' ? filteredProfessionalProjects : filteredPersonalProjects;
@@ -354,6 +227,68 @@ const Projects: React.FC = () => {
     }
   }, [selectedTechs, activeTab, isVisible]);
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 dark:border-cyan-400"></div>
+      </div>
+    );
+  }
+
+  // Error state with retry functionality
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-6">
+          <div className="mb-6">
+            <div className="text-red-500 text-6xl mb-4">⚠️</div>
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+              Unable to Load Projects
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              We encountered an error while fetching the project data.
+            </p>
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 mb-6">
+              <p className="text-sm text-red-700 dark:text-red-300 font-mono">
+                {error.message}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-105"
+          >
+            🔄 Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Empty state (no projects but no error)
+  if (!loading && !error && allProjects.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-6">
+          <div className="text-gray-400 text-6xl mb-4">📂</div>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+            No Projects Found
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            It looks like there are no projects available at the moment.
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-105"
+          >
+            🔄 Refresh
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full p-6" ref={containerRef}>
       {/* Page Title with Stats */}
@@ -365,9 +300,9 @@ const Projects: React.FC = () => {
           Explore my professional and personal work
         </p>
         <div className="flex justify-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-          <span>📊 {projectsData.length + selfProjectsData.length} Total Projects</span>
+          <span>📊 {allProjects.length} Total Projects</span>
           <span>🛠️ {allTechnologies.length} Technologies</span>
-          <span>🏢 {Array.from(new Set(projectsData.map(p => p.Company))).length} Companies</span>
+          <span>🏢 {Array.from(new Set(allProjects.filter(p => p.Company).map(p => p.Company))).length} Companies</span>
         </div>
       </div>
 

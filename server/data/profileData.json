@@ -1,0 +1,32 @@
+{
+  "name": "Haritha Mandanapu",
+  "summary": [
+    "Experienced full-stack engineer with 10+ years building scalable, secure web applications using React, Node.js, Java, and AWS. Passionate about clean code, performance optimization, and AI-driven development.",
+    "Proven track record in platform engineering, SRE practices, and cross-functional collaboration. Enthusiastic problem-solver, mentor, and lifelong learner focused on delivering impactful digital solutions."
+  ],
+  "interests": [
+    "Exploring New Technology",
+    "Arts and Crafts",
+    "Cooking",
+    "Traveling",
+    "Reading",
+    "Music"
+  ],
+  "contact": [
+    {
+      "type": "email",
+      "value": "haritham491@gmail.com",
+      "icon": "email-icon"
+    },
+    {
+      "type": "phone",
+      "value": "(214) 799-1839",
+      "icon": "phone-icon"
+    },
+    {
+      "type": "location",
+      "value": "Dallas, TX",
+      "icon": "location-icon"
+    }
+  ]
+}
