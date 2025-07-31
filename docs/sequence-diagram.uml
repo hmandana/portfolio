@@ -1,0 +1,52 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam sequence {
+    ArrowColor Black
+    ActorBorderColor Black
+    LifeLineBorderColor Gray
+    LifeLineBackgroundColor #EEF2F3
+    ParticipantBorderColor Black
+    ParticipantBackgroundColor #DDEEFF
+    BoxBorderColor #AAAAAA
+    BoxBackgroundColor #F8F8F8
+}
+
+actor User as U
+
+box "Frontend (Client-Side)" #E0F7FA
+  participant "UI" as UI
+  participant "Apollo Client" as ApolloClient
+end box
+
+box "Backend (Server-Side)" #FFF3E0
+  participant "GraphQL Server" as GraphQLServer
+  database "MongoDB" as MongoDB
+end box
+
+U -> UI : Interact with Interface
+UI -> ApolloClient : Send Queries/Mutations
+
+group Home Data
+  ApolloClient -> GraphQLServer : query GetHomeData
+  GraphQLServer -> MongoDB : Retrieve Home Data
+  GraphQLServer --> ApolloClient : Return Home Data
+end
+
+group Projects
+  ApolloClient -> GraphQLServer : query GetProjects
+  GraphQLServer -> MongoDB : Retrieve Projects
+  GraphQLServer --> ApolloClient : Return Projects
+end
+
+group Contact
+  ApolloClient -> GraphQLServer : mutation SendContactMessage
+  GraphQLServer -> MongoDB : Store Contact Message
+end
+
+group Profile
+  ApolloClient -> GraphQLServer : query GetProfile
+  GraphQLServer -> MongoDB : Retrieve Profile
+  GraphQLServer --> ApolloClient : Return Profile
+end
+
+@enduml
