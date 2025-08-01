@@ -49,9 +49,13 @@ const Contact: React.FC = () => {
     }
 
     // Phone validation (optional but if provided should be valid)
-    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-    if (formData.phone.trim() && !phoneRegex.test(formData.phone.replace(/[\s\-\(\)]/g, ''))) {
-      newErrors.phone = 'Please enter a valid phone number';
+    const phoneRegex = /^\+?[1-9]\d{7,14}$/;
+
+    if (formData.phone.trim()) {
+      const normalizedPhone = formData.phone.replace(/[\s\-()]/g, '');
+      if (!phoneRegex.test(normalizedPhone)) {
+        newErrors.phone = 'Please enter a valid phone number';
+      }
     }
 
     // Message validation
@@ -83,7 +87,7 @@ const Contact: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -139,11 +143,10 @@ const Contact: React.FC = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors duration-200 ${
-                    errors.name
+                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors duration-200 ${errors.name
                       ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
                       : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700'
-                  } text-gray-900 dark:text-white`}
+                    } text-gray-900 dark:text-white`}
                   placeholder="Enter your full name"
                 />
                 {errors.name && (
@@ -162,11 +165,10 @@ const Contact: React.FC = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors duration-200 ${
-                    errors.email
+                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors duration-200 ${errors.email
                       ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
                       : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700'
-                  } text-gray-900 dark:text-white`}
+                    } text-gray-900 dark:text-white`}
                   placeholder="Enter your email address"
                 />
                 {errors.email && (
@@ -185,11 +187,10 @@ const Contact: React.FC = () => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors duration-200 ${
-                    errors.phone
+                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-colors duration-200 ${errors.phone
                       ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
                       : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700'
-                  } text-gray-900 dark:text-white`}
+                    } text-gray-900 dark:text-white`}
                   placeholder="Enter your phone number (optional)"
                 />
                 {errors.phone && (
@@ -208,11 +209,10 @@ const Contact: React.FC = () => {
                   rows={6}
                   value={formData.message}
                   onChange={handleInputChange}
-                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent resize-vertical transition-colors duration-200 ${
-                    errors.message
+                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent resize-vertical transition-colors duration-200 ${errors.message
                       ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
                       : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700'
-                  } text-gray-900 dark:text-white`}
+                    } text-gray-900 dark:text-white`}
                   placeholder="Enter your message here..."
                 />
                 {errors.message && (
@@ -225,11 +225,10 @@ const Contact: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white transition-colors duration-200 ${
-                    isSubmitting
+                  className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white transition-colors duration-200 ${isSubmitting
                       ? 'bg-gray-400 cursor-not-allowed'
                       : 'bg-cyan-600 hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500'
-                  }`}
+                    }`}
                 >
                   {isSubmitting ? (
                     <>
