@@ -1,0 +1,90 @@
+name: Deploy Portfolio to Render
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/**'
+      - 'server/**'
+      - 'public/**'
+      - 'cdn-assets/**'
+      - 'package*.json'
+      - 'vite.config.ts'
+      - 'tsconfig.json'
+      - '.github/workflows/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'src/**'
+      - 'server/**'
+      - 'public/**'
+      - 'cdn-assets/**'
+      - 'package*.json'
+      - 'vite.config.ts'
+      - 'tsconfig.json'
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: "portfolio"
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Validate Code
+      run: |
+        npm install
+        npm run lint
+
+  build:
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Cache node modules
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build application
+      run: npm run build:prod
+    
+    - name: Deploy to Render
+      run: |
+        npm run deploy:render
+      
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: './dist'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
