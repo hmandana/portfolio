@@ -127,28 +127,33 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
 
         {/* Action Buttons */}
         <div className="flex justify-between items-center">
-          {isPersonalProject(project) ? (
+          {isPersonalProject(project) && (
             <>
-              <a
-                href={project.demoLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white text-sm font-medium rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
-              >
-                <span className="mr-2">🚀</span>
-                Live Demo
-              </a>
-              <a
-                href={project.githubLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg transition-all duration-300 transform hover:scale-105"
-              >
-                <span className="mr-2">📁</span>
-                GitHub
-              </a>
+              {project.demoLink && (
+                <a
+                  href={project.demoLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white text-sm font-medium rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+                >
+                  <span className="mr-2">🚀</span>
+                  Live Demo
+                </a>
+              )}
+              {project.githubLink && (
+                <a
+                  href={project.githubLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg transition-all duration-300 transform hover:scale-105"
+                >
+                  <span className="mr-2">📁</span>
+                  GitHub
+                </a>
+              )}
             </>
-          ) : (
+          )}
+          {!isPersonalProject(project) && (
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
                 <span>💼</span>

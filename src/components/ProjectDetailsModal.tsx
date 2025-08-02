@@ -38,12 +38,16 @@ const ProjectDetailsModal: React.FC<ProjectDetailsModalProps> = ({ project, onCl
         </div>
         {isPersonalProject(project) && (
           <div className="flex gap-4 mt-4">
-            <a href={project.demoLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-semibold">
-              Live Demo
-            </a>
-            <a href={project.githubLink} target="_blank" rel="noopener noreferrer" className="text-gray-700 dark:text-gray-200 hover:underline font-semibold">
-              View Code
-            </a>
+            {project.demoLink && (
+              <a href={project.demoLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-semibold">
+                Live Demo
+              </a>
+            )}
+            {project.githubLink && (
+              <a href={project.githubLink} target="_blank" rel="noopener noreferrer" className="text-gray-700 dark:text-gray-200 hover:underline font-semibold">
+                View Code
+              </a>
+            )}
           </div>
         )}
       </div>

@@ -140,7 +140,7 @@ const Home: React.FC = () => {
       </div>
 
       {/* Hero Section */}
-      <section className="relative flex flex-col items-center justify-center py-16 md:py-24 text-center min-h-[80vh]">
+      <section className="relative flex flex-col items-center justify-center py-8 md:py-12 text-center min-h-[60vh]">
         {/* Interactive greeting */}
         <div className="mb-6">
           <span className="text-lg text-gray-600 dark:text-gray-400 animate-fade-in-delay-1">
@@ -222,10 +222,9 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
-      {/* Spacer for sticky section */}
-      <div className="h-8"></div>
-      {/* Skills Rolling Carousel Section - Sticky */}
-      <section className="sticky bottom-0 z-10 bg-gray-50 dark:bg-gray-900 py-6 md:py-8 backdrop-blur-sm bg-opacity-95 dark:bg-opacity-95 min-h-[300px]">
+      
+      {/* Skills Rolling Carousel Section */}
+      <section className="bg-gray-50 dark:bg-gray-900 py-12 md:py-16">
         <div className="container mx-auto">
           <div className="flex items-center justify-center mb-8  border-b border-gray-200 dark:border-gray-700">
 
