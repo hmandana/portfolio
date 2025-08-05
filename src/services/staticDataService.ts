@@ -6,8 +6,8 @@ export interface Project {
   title: string;
   description: string;
   technologies: string[];
-  demoUrl?: string;
-  githubUrl: string;
+  demoLink?: string | null;
+  githubLink?: string | null;
   imageUrl?: string;
   type: 'personal' | 'professional';
   featured: boolean;
@@ -126,7 +126,14 @@ class StaticDataService {
   }
 
   async getProjects(): Promise<Project[]> {
-    return this.fetchData<Project[]>('projects.json');
+    const response = await this.fetchData<{data: {projects: Project[]}}>('projects.json');
+    // Transform the data to match our interface
+    return response.data.projects.map(project => ({
+      ...project,
+      id: String(project.id), // Convert numeric ID to string
+      demoLink: project.demoLink || null,
+      githubLink: project.githubLink || null
+    }));
   }
 
   async getProject(id: string): Promise<Project | null> {

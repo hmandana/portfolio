@@ -2,8 +2,8 @@ import React from 'react';
 import type { Project } from '../services/staticDataService';
 
 interface PersonalProject extends Project {
-  demoUrl: string;
-  githubUrl: string;
+  demoLink: string;
+  githubLink: string;
 }
 
 interface ProjectDetailsModalProps {
@@ -12,7 +12,7 @@ interface ProjectDetailsModalProps {
 }
 
 function isPersonalProject(project: Project | PersonalProject): project is PersonalProject {
-  return 'demoUrl' in project && 'githubUrl' in project;
+  return project.type === 'personal' && project.demoLink != null && project.githubLink != null;
 }
 
 const ProjectDetailsModal: React.FC<ProjectDetailsModalProps> = ({ project, onClose }) => {
@@ -42,13 +42,13 @@ const ProjectDetailsModal: React.FC<ProjectDetailsModalProps> = ({ project, onCl
         </div>
         {isPersonalProject(project) && (
           <div className="flex gap-4 mt-4">
-            {project.demoUrl && (
-              <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-semibold">
+            {project.demoLink && (
+              <a href={project.demoLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-semibold">
                 Live Demo
               </a>
             )}
-            {project.githubUrl && (
-              <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="text-gray-700 dark:text-gray-200 hover:underline font-semibold">
+            {project.githubLink && (
+              <a href={project.githubLink} target="_blank" rel="noopener noreferrer" className="text-gray-700 dark:text-gray-200 hover:underline font-semibold">
                 View Code
               </a>
             )}

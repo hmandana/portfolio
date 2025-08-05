@@ -6,8 +6,8 @@ import type { Project } from '../services/staticDataService';
 
 // Personal projects should have demo and github URLs
 interface PersonalProject extends Project {
-  demoUrl: string;
-  githubUrl: string;
+  demoLink: string;
+  githubLink: string;
 }
 
 
