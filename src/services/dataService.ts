@@ -82,7 +82,7 @@ class HybridDataService {
     return this.isGraphQLAvailable;
   }
 
-  private async executeGraphQLQuery<T>(query: DocumentNode | TypedDocumentNode<any, Record<string, unknown>>, variables?: Record<string, unknown>): Promise<T> {
+  private async executeGraphQLQuery<T>(query: DocumentNode | TypedDocumentNode<T, Record<string, unknown>>, variables?: Record<string, unknown>): Promise<T> {
     if (!this.config.apolloClient) {
       throw new Error('Apollo client not configured');
     }

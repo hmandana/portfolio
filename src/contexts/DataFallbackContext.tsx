@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useState, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
 
 interface HomeData {
@@ -57,7 +57,7 @@ interface StaticData {
   projects: Project[] | null;
 }
 
-interface DataFallbackState {
+export interface DataFallbackState {
   staticData: StaticData;
   isUsingFallback: boolean;
   isOnline: boolean;
@@ -275,14 +275,6 @@ export const DataFallbackProvider: React.FC<DataFallbackProviderProps> = ({ chil
       {children}
     </DataFallbackContext.Provider>
   );
-};
-
-export const useDataFallback = (): DataFallbackState => {
-  const context = useContext(DataFallbackContext);
-  if (!context) {
-    throw new Error('useDataFallback must be used within a DataFallbackProvider');
-  }
-  return context;
 };
 
 export default DataFallbackProvider;
