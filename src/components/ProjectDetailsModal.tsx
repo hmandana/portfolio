@@ -1,14 +1,18 @@
 import React from 'react';
-import type { Project } from '../pages/Projects';
-// If default, could use: import Project from '../pages/Projects';
+import type { Project } from '../services/staticDataService';
+
+interface PersonalProject extends Project {
+  demoUrl: string;
+  githubUrl: string;
+}
 
 interface ProjectDetailsModalProps {
-  project: Project | null;
+  project: Project | PersonalProject | null;
   onClose: () => void;
 }
 
-function isPersonalProject(project: Project | { demoLink?: string; githubLink?: string }): project is Project & { demoLink: string; githubLink: string } {
-  return typeof project.demoLink === 'string' && typeof project.githubLink === 'string';
+function isPersonalProject(project: Project | PersonalProject): project is PersonalProject {
+  return 'demoUrl' in project && 'githubUrl' in project;
 }
 
 const ProjectDetailsModal: React.FC<ProjectDetailsModalProps> = ({ project, onClose }) => {
@@ -38,13 +42,13 @@ const ProjectDetailsModal: React.FC<ProjectDetailsModalProps> = ({ project, onCl
         </div>
         {isPersonalProject(project) && (
           <div className="flex gap-4 mt-4">
-            {project.demoLink && (
-              <a href={project.demoLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-semibold">
+            {project.demoUrl && (
+              <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-semibold">
                 Live Demo
               </a>
             )}
-            {project.githubLink && (
-              <a href={project.githubLink} target="_blank" rel="noopener noreferrer" className="text-gray-700 dark:text-gray-200 hover:underline font-semibold">
+            {project.githubUrl && (
+              <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="text-gray-700 dark:text-gray-200 hover:underline font-semibold">
                 View Code
               </a>
             )}

@@ -1,24 +1,13 @@
 import React, { useState, useMemo, useCallback, useEffect, useRef, lazy, Suspense } from 'react';
-import { useQuery } from '@apollo/client';
-import { GET_PROJECTS } from '../graphql/queries';
+import { useData } from '../contexts/DataContext';
 import ProjectDetailsModal from '../components/ProjectDetailsModal';
 import '../styles/projects-animations.css';
+import type { Project } from '../services/staticDataService';
 
-// Enhanced type definitions
-export interface Project {
-  id: number;
-  title: string;
-  description: string;
-  technologies: string[];
-  Company?: string;
-  demoLink?: string;
-  githubLink?: string;
-  type: 'professional' | 'personal';
-}
-
+// Personal projects should have demo and github URLs
 interface PersonalProject extends Project {
-  demoLink: string;
-  githubLink: string;
+  demoUrl: string;
+  githubUrl: string;
 }
 
 
@@ -89,11 +78,14 @@ const Projects: React.FC = () => {
   const VISIBLE_COUNT = 5;
   const LOAD_MORE_COUNT = 6;
 
-  // GraphQL query
-  const { data, loading, error } = useQuery<{ projects: Project[] }>(GET_PROJECTS);
+  // Use DataContext instead of direct GraphQL queries
+  const {
+    projects: allProjects,
+    projectsLoading: loading,
+    projectsError
+  } = useData();
 
-  // Use GraphQL data
-  const allProjects = data?.projects || [];
+  const error = projectsError ? { message: projectsError } : null;
   const professionalProjects = allProjects.filter(p => p.type === 'professional');
   const personalProjects = allProjects.filter(p => p.type === 'personal');
 

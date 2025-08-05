@@ -28,7 +28,10 @@
     "env:create:dev": "node scripts/setup-env.js create development",
     "env:create:prod": "node scripts/setup-env.js create production",
     "build:prod": "NODE_ENV=production npm run build",
-    "deploy:render": "npm run env:validate && npm run build:prod"
+    "build:github-pages": "VITE_USE_STATIC_DATA=true npm run build",
+    "deploy:github-pages": "npm run build:github-pages && gh-pages -d dist",
+    "copy:static-data": "mkdir -p dist/data && cp -r public/data/* dist/data/",
+    "build:static": "npm run build:github-pages && npm run copy:static-data"
   },
   "dependencies": {
     "@apollo/client": "^3.13.9",

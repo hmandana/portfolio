@@ -1,0 +1,269 @@
+{
+  "name": "Haritha Mandanapu",
+  "summary": [
+    "Experienced full-stack engineer with 10+ years building scalable, secure web applications using React, Node.js, Java, and AWS. Passionate about clean code, performance optimization, and AI-driven development.",
+    "Proven track record in platform engineering, SRE practices, and cross-functional collaboration. Enthusiastic problem-solver, mentor, and lifelong learner focused on delivering impactful digital solutions."
+  ],
+  "skills": [
+    {
+      "name": "JavaScript",
+      "image": "/assets/skills/javascript.png"
+    },
+    {
+      "name": "TypeScript",
+      "image": "/assets/skills/typescript.png"
+    },
+    {
+      "name": "ReactJS",
+      "image": "/assets/skills/react.png"
+    },
+    {
+      "name": "Angular",
+      "image": "/assets/skills/angular.png"
+    },
+    {
+      "name": "Redux",
+      "image": "/assets/skills/redux.png"
+    },
+    {
+      "name": "Node.js",
+      "image": "/assets/skills/nodejs.png"
+    },
+    {
+      "name": "GraphQL",
+      "image": "/assets/skills/graphql.png"
+    },
+    {
+      "name": "Next.js",
+      "image": "/assets/skills/nextjs.png"
+    },
+    {
+      "name": "Tailwind CSS",
+      "image": "/assets/skills/tailwind.png"
+    },
+    {
+      "name": "Bootstrap",
+      "image": "/assets/skills/bootstrap.png"
+    },
+    {
+      "name": "Material UI",
+      "image": "/assets/skills/material-ui.png"
+    },
+    {
+      "name": "MongoDB",
+      "image": "/assets/skills/mongodb.png"
+    },
+    {
+      "name": "MySQL",
+      "image": "/assets/skills/mysql.png"
+    },
+    {
+      "name": "PostCSS",
+      "image": "/assets/skills/postcss.svg"
+    },
+    {
+      "name": "Jest",
+      "image": "/assets/skills/jest.png"
+    },
+    {
+      "name": "Less",
+      "image": "/assets/skills/less.png"
+    },
+    {
+      "name": "Sass",
+      "image": "/assets/skills/sass.png"
+    },
+    {
+      "name": "Webpack",
+      "image": "/assets/skills/webpack.png"
+    },
+    {
+      "name": "Babel",
+      "image": "/assets/skills/babel.png"
+    },
+    {
+      "name": "Git",
+      "image": "/assets/skills/git.png"
+    },
+    {
+      "name": "Storybook",
+      "image": "/assets/skills/storybook.png"
+    },
+    {
+      "name": "React Testing Library",
+      "image": "/assets/skills/react-testing-library.png"
+    },
+    {
+      "name": "Selenium",
+      "image": "/assets/skills/selenium.png"
+    },
+    {
+      "name": "Cypress",
+      "image": "/assets/skills/cypress.png"
+    },
+    {
+      "name": "Playwright",
+      "image": "/assets/skills/playwright.png"
+    },
+    {
+      "name": "Python",
+      "image": "/assets/skills/python.png"
+    },
+    {
+      "name": "Java",
+      "image": "/assets/skills/java.png"
+    },
+    {
+      "name": "Kotlin",
+      "image": "/assets/skills/kotlin.png"
+    },
+    {
+      "name": "Spring Boot",
+      "image": "/assets/skills/spring-boot.png"
+    },
+    {
+      "name": "Docker",
+      "image": "/assets/skills/docker.png"
+    },
+    {
+      "name": "Kubernetes",
+      "image": "/assets/skills/kubernetes.png"
+    },
+    {
+      "name": "AWS",
+      "image": "/assets/skills/aws.png"
+    },
+    {
+      "name": "Jenkins",
+      "image": "/assets/skills/jenkins.png"
+    }
+  ],
+  "workExperience": [
+    {
+      "title": "Software Development Engineer",
+      "company": "Expedia Group",
+      "years": "2022 - 2024",
+      "details": [
+        "Led development of the Expedia Group Console, a unified platform for travel ecosystem integration",
+        "Built and maintained Lodging Connectivity platform enabling real-time synchronization with partner systems",
+        "Implemented unified login system with OAuth2/OIDC standards for cross-brand authentication",
+        "Developed with React, TypeScript, Apollo GraphQL, and Kotlin on AWS infrastructure",
+        "Mentored junior developers and contributed to architectural decisions"
+      ]
+    },
+    {
+      "title": "Sr. Associate Software Engineer",
+      "company": "JP Morgan Chase & Co.",
+      "years": "2020 - 2022",
+      "details": [
+        "Developed CIB Identity Services for unified authentication across JP Morgan portals",
+        "Built Trading Operations content management system with advanced data visualization",
+        "Implemented secure authentication solutions using IAM and JWT tokens",
+        "Worked with React, TypeScript, Java Spring Boot, and AWS cloud services",
+        "Ensured WCAG compliance and accessibility standards for all applications"
+      ]
+    },
+    {
+      "title": "Software Engineer",
+      "company": "USAA",
+      "years": "2018 - 2020",
+      "details": [
+        "Developed Government Shutdown Loan application for Consumer Lending Origination Experience (CLOE)",
+        "Built secure dual-facing web application for both member and internal use",
+        "Implemented automated loan processing workflows with React and Node.js",
+        "Ensured accessibility compliance with JAWS screen reader testing",
+        "Utilized Redux for state management and comprehensive testing with Jest and Cucumber"
+      ]
+    },
+    {
+      "title": "Software Engineer",
+      "company": "West Interactive Services",
+      "years": "2016 - 2018",
+      "details": [
+        "Developed West Customer Portal for cloud-based customer experience solutions",
+        "Built WISDOM platform for IVR call flow testing and scenario management",
+        "Implemented solutions for healthcare, education, utilities, and commercial industries",
+        "Used React, Node.js, Hapi.js, and Redux with PCF cloud deployment",
+        "Focused on improving customer interaction and productivity tools"
+      ]
+    },
+    {
+      "title": "Software Engineer",
+      "company": "Target Corporation",
+      "years": "2015 - 2016",
+      "details": [
+        "Created Image Asset Search Engine for centralized asset retrieval across Target",
+        "Built solutions to aggregate assets from various teams, channels, and storage systems",
+        "Developed using Ember.js, Node.js, and Go Lang with MongoDB backend",
+        "Implemented infrastructure automation with Terraform, Ansible, and OpenStack",
+        "Collaborated with design teams using Adobe InDesign for asset management"
+      ]
+    },
+    {
+      "title": "Software Engineer",
+      "company": "BestBuy Corporation",
+      "years": "2014 - 2015",
+      "details": [
+        "Developed CORAL Content Management Platform for business users",
+        "Implemented COPE (Create Once Publish Everywhere) content strategy",
+        "Built platform supporting multiple enterprise teams and entry points",
+        "Used Java, J2EE, Spring MVC, and Angular.js with RESTful APIs",
+        "Integrated with MongoDB, Oracle 11g, and Jackrabbit CMS"
+      ]
+    },
+    {
+      "title": "Software Engineer",
+      "company": "GENBAND",
+      "years": "2013 - 2014",
+      "details": [
+        "Developed GENBAND Software Center (GSC) web-based application",
+        "Provided customers with software download capabilities for supported hardware",
+        "Built solution using Java, J2EE, JSF PrimeFaces, and Spring MVC",
+        "Implemented Oracle JDBC integration and LDAP authentication",
+        "Deployed on GlassFish application server"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Masters of Science in Computer Science",
+      "school": "University of North Carolina at Charlotte",
+      "year": "2013",
+      "details": "Specialized in Software Engineering and Data Mining, focusing on advanced algorithms and data structures. Completed coursework in machine learning, database systems, software architecture, and distributed systems."
+    },
+    {
+      "degree": "Bachelor of Technology in Computer Science and Engineering",
+      "school": "Jawaharlal Nehru Technological University",
+      "year": "2011",
+      "details": "Foundation in computer science fundamentals including programming, data structures, algorithms, operating systems, and computer networks. Graduated with distinction and participated in various technical projects."
+    }
+  ],
+  "certifications": [
+    {
+      "name": "AWS Certified Cloud Practitioner",
+      "org": "Amazon Web Services",
+      "year": "2021",
+      "details": "Foundational certification showcasing knowledge of AWS cloud services, cloud computing concepts, security, pricing, and support models."
+    },
+    {
+      "name": "Certified Scrum Master (CSM)",
+      "org": "Scrum Alliance",
+      "year": "2020",
+      "details": "Demonstrates understanding of Scrum framework, agile principles, and ability to facilitate Scrum ceremonies and coach development teams."
+    },
+    {
+      "name": "Oracle Certified Professional Java SE",
+      "org": "Oracle Corporation",
+      "year": "2019",
+      "details": "Professional-level certification validating advanced Java programming skills, object-oriented design principles, and enterprise application development."
+    }
+  ],
+  "interests": [
+    "Exploring New Technology",
+    "Arts and Crafts",
+    "Cooking",
+    "Traveling",
+    "Reading",
+    "Music"
+  ]
+}

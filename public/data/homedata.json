@@ -1,0 +1,20 @@
+{
+      "name": "Haritha Mandanapu",
+      "roles": [
+        "Full-Stack Engineer",
+        "React Developer",
+        "AWS Cloud Expert",
+        "UI/UX Enthusiast",
+        "DevOps Engineer"
+      ],
+      "intro": [
+        "I'm a passionate and results-driven software engineer building full-stack web applications that scale from crafting elegant frontends to architecting resilient backends I'm all about turning ideas into fast, secure, and impactful digital solutions.",
+        "I thrive in environments where innovation meets execution. Whether it's streamlining CI/CD pipelines, optimizing cloud infrastructure on AWS, or integrating AI to supercharge developer workflows, I love pushing the boundaries of what's possible. I take pride in clean code, strong systems, and building tools that make life easier for users and developers alike.",
+        "Curious by nature and always up for a challenge—I'm constantly learning, mentoring, and collaborating with teams to create products that matter. Let's build something amazing."
+      ],
+      "stats": {
+        "yearsExperience": 10,
+        "technologiesCount": 98,
+        "projectsDelivered": 12
+      }
+    }

@@ -1,32 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { useQuery } from '@apollo/client';
-import { GET_HOME_DATA, GET_PROFILE } from '../graphql/queries';
+import { useData } from '../contexts/DataContext';
 import { getSkillImageUrl, FALLBACK_IMAGES } from '../config/cdn';
 import '../styles/projects-animations.css';
 
-// Types
-interface HomeData {
-  name: string;
-  roles: string[];
-  intro: string[];
-  stats: {
-    yearsExperience: number;
-    technologiesCount: number;
-    projectsDelivered: number;
-  };
-}
-
-interface Skill {
-  name: string;
-  image: string;
-}
-
-interface Profile {
-  name: string;
-  summary: string[];
-  skills: Skill[];
-}
+// Types (interfaces used in GraphQL queries)
 
 
 /**
@@ -54,14 +32,21 @@ const Home: React.FC = () => {
   const [isTyping, setIsTyping] = useState(true);
   const [displayedText, setDisplayedText] = useState('');
 
-  // GraphQL queries - These must be called before any conditional returns
-  const { data: homeData, loading: homeLoading, error: homeError } = useQuery<{ homeData: HomeData }>(GET_HOME_DATA);
-  const { data: profileData, loading: profileLoading, error: profileError } = useQuery<{ profile: Profile }>(GET_PROFILE);
+  // Use DataContext instead of direct GraphQL queries
+  const {
+    homeData: home,
+    profile,
+    homeDataLoading,
+    profileLoading,
+    homeDataError,
+    profileError,
+    dataSource
+  } = useData();
 
-  const home = homeData?.homeData;
-  const profile = profileData?.profile;
   const displayRoles = home?.roles || roles;
   const skills = profile?.skills || [];
+  const homeLoading = homeDataLoading;
+  const homeError = homeDataError;
 
   // Typewriter effect for roles
   useEffect(() => {
@@ -112,17 +97,22 @@ const Home: React.FC = () => {
         <div className="text-center">
           <div className="text-red-500 text-xl mb-4">❌ Error loading data</div>
           <p className="text-gray-600 dark:text-gray-400">
-            {homeError?.message || profileError?.message}
+            {homeError || profileError}
           </p>
         </div>
       </div>
     );
   }
 
-  const currentIntroIndex = currentRoleIndex % (home?.intro?.length || 1);
-
   return (
     <div className="animate-fadeIn relative overflow-hidden" onMouseMove={handleMouseMove}>
+      {/* Data Source Indicator (for debugging) */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="fixed top-4 right-4 z-50 bg-black text-white px-2 py-1 text-xs rounded">
+          Data: {dataSource}
+        </div>
+      )}
+      
       {/* Dynamic Background Particles */}
       <div className="absolute inset-0 pointer-events-none">
         {[...Array(20)].map((_, i) => (
@@ -168,7 +158,7 @@ const Home: React.FC = () => {
         {/* Dynamic Introduction */}
         <div className="max-w-3xl mb-10 px-4">
           <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed animate-fade-in-delay-3">
-            {home?.intro?.[currentIntroIndex] || 'Loading...'}
+            {home?.intro || 'Loading...'}
           </p>
         </div>
 

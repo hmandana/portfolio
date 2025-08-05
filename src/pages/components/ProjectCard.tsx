@@ -1,16 +1,9 @@
 import React, { useState, useEffect } from 'react';
-
-interface Project {
-  id: number;
-  title: string;
-  description: string;
-  technologies: string[];
-  Company?: string;
-}
+import { type Project } from '../../services/staticDataService';
 
 interface PersonalProject extends Project {
-  demoLink: string;
-  githubLink: string;
+  demoUrl: string;
+  githubUrl: string;
 }
 
 interface ProjectCardProps {
@@ -30,7 +23,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
   }, [index]);
 
   const isPersonalProject = (proj: PersonalProject | Project): proj is PersonalProject => {
-    return 'demoLink' in proj && 'githubLink' in proj;
+    return 'demoUrl' in proj && 'githubUrl' in proj;
   };
 
   const getGradientClass = (index: number) => {
@@ -129,9 +122,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
         <div className="flex justify-between items-center">
           {isPersonalProject(project) && (
             <>
-              {project.demoLink && (
+              {project.demoUrl && (
                 <a
-                  href={project.demoLink}
+                  href={project.demoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white text-sm font-medium rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
@@ -140,9 +133,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
                   Live Demo
                 </a>
               )}
-              {project.githubLink && (
+              {project.githubUrl && (
                 <a
-                  href={project.githubLink}
+                  href={project.githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg transition-all duration-300 transform hover:scale-105"
