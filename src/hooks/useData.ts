@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState, useCallback } from 'react';
 import DataContext, { type DataContextType } from '../contexts/DataContext';
 import type { Project, Profile, HomeData } from '../services/staticDataService';
+import { getDataPath } from '../utils/basePath';
 
 // Interface for raw JSON project data
 interface RawProjectData {
@@ -29,9 +30,9 @@ const useBackupData = (): DataContextType => {
 
       // Load all data files in parallel
       const [projectsResponse, profileResponse, homeDataResponse] = await Promise.all([
-        fetch('/data/projects.json'),
-        fetch('/data/profile.json'), 
-        fetch('/data/homedata.json')
+        fetch(getDataPath('projects.json')),
+        fetch(getDataPath('profile.json')), 
+        fetch(getDataPath('homedata.json'))
       ]);
 
       if (!projectsResponse.ok || !profileResponse.ok || !homeDataResponse.ok) {

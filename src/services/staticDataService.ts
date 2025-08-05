@@ -1,5 +1,6 @@
 // Static data service for GitHub Pages deployment fallback
 // This service provides data when GraphQL API is not available
+import { getDataPath } from '../utils/basePath';
 
 export interface Project {
   id: string;
@@ -114,7 +115,8 @@ class StaticDataService {
 
   private async fetchData<T>(endpoint: string): Promise<T> {
     try {
-      const response = await fetch(`${this.baseUrl}/data/${endpoint}`);
+      const url = this.baseUrl ? `${this.baseUrl}/data/${endpoint}` : getDataPath(endpoint);
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`Failed to fetch ${endpoint}: ${response.statusText}`);
       }
@@ -126,11 +128,15 @@ class StaticDataService {
   }
 
   async getProjects(): Promise<Project[]> {
-    const response = await this.fetchData<{data: {projects: Project[]}}>('projects.json');
+    const response = await this.fetchData<Project[]>('projects.json');
     // Transform the data to match our interface
-    return response.data.projects.map(project => ({
+    return response.map(project => ({
       ...project,
       id: String(project.id), // Convert numeric ID to string
+      featured: project.type === 'personal', // Assume personal projects are featured
+      status: 'completed' as const,
+      startDate: '2024-01-01',
+      endDate: project.type === 'professional' ? '2024-12-31' : null,
       demoLink: project.demoLink || null,
       githubLink: project.githubLink || null
     }));
