@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import DataFallbackContext, { type DataFallbackState } from '../contexts/DataFallbackContext';
+import { DataFallbackContext, type DataFallbackState } from '../contexts/DataFallbackContext';
 
 export const useDataFallback = (): DataFallbackState => {
   const context = useContext(DataFallbackContext);

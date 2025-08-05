@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback, useEffect, useRef, lazy, Suspense } from 'react';
-import { useData } from '../contexts/DataContext';
+import { useData } from '../hooks/useData';
 import ProjectDetailsModal from '../components/ProjectDetailsModal';
 import '../styles/projects-animations.css';
 import type { Project } from '../services/staticDataService';
@@ -86,8 +86,8 @@ const Projects: React.FC = () => {
   } = useData();
 
   const error = projectsError ? { message: projectsError } : null;
-  const professionalProjects = allProjects.filter(p => p.type === 'professional');
-  const personalProjects = allProjects.filter(p => p.type === 'personal');
+  const professionalProjects = allProjects.filter((p: Project) => p.type === 'professional');
+  const personalProjects = allProjects.filter((p: Project) => p.type === 'personal');
 
   // Memoized computations for better performance - MUST be before conditional returns
   const allTechnologies = useMemo(() =>
@@ -107,8 +107,8 @@ const Projects: React.FC = () => {
     let filtered = professionalProjects;
 
     if (selectedTechs.length > 0) {
-      filtered = filtered.filter(project => 
-        selectedTechs.some(tech => project.technologies.includes(tech))
+      filtered = filtered.filter((project: Project) =>
+        selectedTechs.some((tech: string) => project.technologies.includes(tech))
       );
     }
 

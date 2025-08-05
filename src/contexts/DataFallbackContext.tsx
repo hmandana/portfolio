@@ -67,6 +67,8 @@ export interface DataFallbackState {
 
 const DataFallbackContext = createContext<DataFallbackState | null>(null);
 
+export { DataFallbackContext };
+
 interface DataFallbackProviderProps {
   children: ReactNode;
 }

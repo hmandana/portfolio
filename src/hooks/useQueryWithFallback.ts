@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useQuery, ApolloError } from '@apollo/client';
 import type { DocumentNode } from '@apollo/client';
-import { useDataFallback } from '../contexts/DataFallbackContext';
+import { useDataFallback } from './useDataFallback';
 
 interface UseQueryWithFallbackOptions {
   query: DocumentNode;

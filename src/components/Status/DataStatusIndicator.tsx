@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useData } from '../../contexts/DataContext';
+import { useData } from '../../hooks/useData';
 
 const DataStatusIndicator: React.FC = () => {
   const { dataSource, isUsingGraphQL, projectsError, profileError, homeDataError } = useData();

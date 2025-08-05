@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { useData } from '../contexts/DataContext';
+import { useData } from '../hooks/useData';
 import { getSkillImageUrl, FALLBACK_IMAGES } from '../config/cdn';
 import '../styles/projects-animations.css';
 
@@ -234,7 +234,7 @@ const Home: React.FC = () => {
             >
               {/* Triple the skills for perfect seamless loop */}
               {[...Array(3)].map((_, setIndex) =>
-                skills.map((skill, idx) => (
+                skills.map((skill: any, idx: number) => (
                   <div
                     key={`${skill.name}-${setIndex}-${idx}`}
                     className="flex flex-col items-center justify-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm text-sm transition-all duration-200 hover:scale-110 hover:shadow-md hover:z-30 relative group cursor-pointer skills-card"
